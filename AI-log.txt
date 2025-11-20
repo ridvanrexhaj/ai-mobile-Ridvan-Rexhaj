@@ -10,3 +10,5 @@ Add user authentication (sign up, login, logout)
 Clean project structure with clear documentation
 Sleek, modern UI design
 GitHub integration for version control
+
+the supabase url and anon key are in the .env file
