@@ -8,10 +8,12 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Switch,
 } from 'react-native';
 import { Input, Button } from '@rneui/themed';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import { colors, spacing, borderRadius, shadows } from '../theme/colors';
@@ -29,10 +31,39 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [fullName, setFullName] = useState('');
   const [currency, setCurrency] = useState('USD');
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     loadProfile();
+    loadDarkMode();
   }, []);
+
+  async function loadDarkMode() {
+    try {
+      const value = await AsyncStorage.getItem('darkMode');
+      if (value !== null) {
+        setDarkMode(value === 'true');
+      }
+    } catch (error) {
+      console.error('Error loading dark mode:', error);
+    }
+  }
+
+  async function toggleDarkMode(value: boolean) {
+    try {
+      setDarkMode(value);
+      await AsyncStorage.setItem('darkMode', value.toString());
+      Alert.alert(
+        'Dark Mode',
+        value 
+          ? 'Dark mode enabled! (Coming soon in next update)' 
+          : 'Dark mode disabled',
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.error('Error saving dark mode:', error);
+    }
+  }
 
   async function loadProfile() {
     try {
@@ -69,7 +100,7 @@ export default function ProfileScreen() {
       return;
     }
 
-    const result = await ImagePicker.launchImagePickerAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
@@ -213,6 +244,26 @@ export default function ProfileScreen() {
             inputContainerStyle={styles.inputInner}
           />
 
+          <View style={styles.settingsSection}>
+            <Text style={styles.sectionTitle}>Preferences</Text>
+            
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <Ionicons name="moon" size={20} color={colors.primary.main} style={{ marginRight: spacing.md }} />
+                <View>
+                  <Text style={styles.settingLabel}>Dark Mode</Text>
+                  <Text style={styles.settingHint}>Enable dark theme (coming soon)</Text>
+                </View>
+              </View>
+              <Switch
+                value={darkMode}
+                onValueChange={toggleDarkMode}
+                trackColor={{ false: colors.background.secondary, true: colors.primary.light }}
+                thumbColor={darkMode ? colors.primary.main : '#f4f3f4'}
+              />
+            </View>
+          </View>
+
           <Button
             title="Save Changes"
             onPress={updateProfile}
@@ -345,5 +396,38 @@ const styles = StyleSheet.create({
   },
   signOutButtonContainer: {
     marginTop: spacing.md,
+  },
+  settingsSection: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text.primary,
+    marginBottom: spacing.md,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  settingLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+  settingHint: {
+    fontSize: 12,
+    color: colors.text.secondary,
+    marginTop: 2,
   },
 });

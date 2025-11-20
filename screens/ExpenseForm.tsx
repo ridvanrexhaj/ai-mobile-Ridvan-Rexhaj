@@ -17,7 +17,6 @@ import { Expense } from '../types';
 import { colors, spacing, borderRadius, shadows } from '../theme/colors';
 
 interface Props {
-  session: Session;
   expense?: Expense | null;
   onClose: (shouldRefresh?: boolean) => void;
 }
@@ -32,7 +31,7 @@ const CATEGORIES = [
   { name: 'other', label: 'Other', icon: 'dots-horizontal-circle', color: colors.categories.other },
 ];
 
-export default function ExpenseForm({ session, expense, onClose }: Props) {
+export default function ExpenseForm({ expense, onClose }: Props) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('other');
@@ -62,8 +61,11 @@ export default function ExpenseForm({ session, expense, onClose }: Props) {
 
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const expenseData = {
-        user_id: session.user.id,
+        user_id: user.id,
         amount: numAmount,
         description: description.trim(),
         category: (category || 'other').toLowerCase(),

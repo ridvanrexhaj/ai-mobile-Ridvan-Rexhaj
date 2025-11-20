@@ -225,6 +225,8 @@ export default function BudgetsScreen() {
           const iconName = categoryIcons[budget.category] || 'ellipse';
           const color = categoryColors[budget.category] || categoryColors.other;
 
+          const statusColor = typeof status.color === 'string' ? status.color : status.color.main;
+
           return (
             <View key={budget.id} style={styles.budgetCard}>
               <View style={styles.budgetHeader}>
@@ -255,10 +257,10 @@ export default function BudgetsScreen() {
                   <Text style={styles.budgetTotal}>of ${budget.amount.toFixed(2)}</Text>
                 </View>
                 <View style={styles.progressBarContainer}>
-                  <View style={[styles.progressBar, { width: `${percentage}%`, backgroundColor: status.color }]} />
+                  <View style={[styles.progressBar, { width: `${percentage}%`, backgroundColor: statusColor }]} />
                 </View>
                 <View style={styles.budgetStatus}>
-                  <Text style={[styles.statusText, { color: status.color }]}>{status.message}</Text>
+                  <Text style={[styles.statusText, { color: statusColor }]}>{status.message}</Text>
                   <Text style={styles.remainingText}>
                     {budget.amount - spent >= 0 ? `$${(budget.amount - spent).toFixed(2)} left` : 'Budget exceeded'}
                   </Text>

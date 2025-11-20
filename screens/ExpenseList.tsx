@@ -7,43 +7,36 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Card, Icon } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
-import { Session } from '@supabase/supabase-js';
 import { Expense } from '../types';
 import { colors, spacing, borderRadius, shadows } from '../theme/colors';
+import ExpenseForm from './ExpenseForm';
 
-interface Props {
-  session: Session;
-  onAddExpense: () => void;
-  onEditExpense: (expense: Expense) => void;
-  refreshKey: number;
-}
-
-export default function ExpenseList({ session, onAddExpense, onEditExpense, refreshKey }: Props) {
+export default function ExpenseList() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  useEffect(() => {
-    if (refreshKey > 0) {
-      fetchExpenses();
-    }
-  }, [refreshKey]);
-
   async function fetchExpenses() {
     try {
       setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('user_id', user.id)
         .order('date', { ascending: false });
 
       if (error) throw error;
@@ -53,6 +46,24 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  }
+
+  function handleAddExpense() {
+    setEditingExpense(null);
+    setShowForm(true);
+  }
+
+  function handleEditExpense(expense: Expense) {
+    setEditingExpense(expense);
+    setShowForm(true);
+  }
+
+  function handleCloseForm(shouldRefresh: boolean = false) {
+    setShowForm(false);
+    setEditingExpense(null);
+    if (shouldRefresh) {
+      fetchExpenses();
     }
   }
 
@@ -130,7 +141,7 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
         <TouchableOpacity 
           style={styles.card}
           activeOpacity={0.95}
-          onPress={() => onEditExpense(item)}
+          onPress={() => handleEditExpense(item)}
         >
           <View style={styles.expenseRow}>
             <View style={[styles.iconContainer, { backgroundColor: `${categoryColor}15` }]}>
@@ -159,7 +170,7 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
                   style={styles.actionButton}
                   onPress={(e) => {
                     e.stopPropagation();
-                    onEditExpense(item);
+                    handleEditExpense(item);
                   }}
                 >
                   <Icon name="pencil" type="material-community" size={18} color={colors.primary.main} />
@@ -250,7 +261,7 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
         />
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={onAddExpense} activeOpacity={0.85}>
+      <TouchableOpacity style={styles.fab} onPress={handleAddExpense} activeOpacity={0.85}>
         <LinearGradient
           colors={[colors.primary.gradient1, colors.primary.gradient2]}
           start={{ x: 0, y: 0 }}
@@ -260,6 +271,17 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
           <Icon name="plus" type="material-community" color={colors.text.inverse} size={28} />
         </LinearGradient>
       </TouchableOpacity>
+
+      <Modal
+        visible={showForm}
+        animationType="slide"
+        onRequestClose={() => handleCloseForm(false)}
+      >
+        <ExpenseForm
+          expense={editingExpense}
+          onClose={handleCloseForm}
+        />
+      </Modal>
     </View>
   );
 }
