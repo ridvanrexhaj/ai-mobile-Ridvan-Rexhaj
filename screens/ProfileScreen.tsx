@@ -15,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme, lightColors } from '../contexts/ThemeContext';
 import { spacing, borderRadius, shadows } from '../theme/colors';
 
 interface Profile {
@@ -25,6 +25,148 @@ interface Profile {
   currency: string;
 }
 
+const getStyles = (colors: typeof lightColors) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+  },
+  header: {
+    paddingTop: 60,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.text.inverse,
+  },
+  content: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+  },
+  avatarSection: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+  },
+  avatarContainer: {
+    position: 'relative',
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+  },
+  avatarPlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.primary.main,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: colors.background.paper,
+  },
+  uploadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 60,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarHint: {
+    marginTop: spacing.sm,
+    fontSize: 14,
+    color: colors.text.secondary,
+  },
+  form: {
+    paddingHorizontal: spacing.lg,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: spacing.xs,
+    marginLeft: spacing.xs,
+    color: colors.text.primary,
+  },
+  inputContainer: {
+    paddingHorizontal: 0,
+  },
+  inputInner: {
+    borderBottomWidth: 0,
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+  },
+  saveButton: {
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.lg,
+  },
+  saveButtonContainer: {
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  signOutButton: {
+    borderWidth: 2,
+    borderColor: colors.danger.main,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.lg,
+  },
+  signOutButtonContainer: {
+    marginTop: spacing.md,
+  },
+  settingsSection: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: spacing.md,
+    color: colors.text.primary,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.md,
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.md,
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  settingLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+  settingHint: {
+    fontSize: 12,
+    marginTop: 2,
+    color: colors.text.secondary,
+  },
+});
+
 export default function ProfileScreen() {
   const { colors, isDark, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
@@ -32,6 +174,8 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [fullName, setFullName] = useState('');
   const [currency, setCurrency] = useState('USD');
+
+  const styles = getStyles(colors);
 
   useEffect(() => {
     loadProfile();
@@ -199,21 +343,25 @@ export default function ProfileScreen() {
           <Text style={styles.inputLabel}>Full Name</Text>
           <Input
             placeholder="Enter your name"
+            placeholderTextColor={colors.text.disabled}
             value={fullName}
             onChangeText={setFullName}
             leftIcon={<Ionicons name="person-outline" size={20} color={colors.text.secondary} />}
             containerStyle={styles.inputContainer}
             inputContainerStyle={styles.inputInner}
+            inputStyle={{ color: colors.text.primary }}
           />
 
           <Text style={styles.inputLabel}>Currency</Text>
           <Input
             placeholder="USD"
+            placeholderTextColor={colors.text.disabled}
             value={currency}
             onChangeText={setCurrency}
             leftIcon={<Ionicons name="cash-outline" size={20} color={colors.text.secondary} />}
             containerStyle={styles.inputContainer}
             inputContainerStyle={styles.inputInner}
+            inputStyle={{ color: colors.text.primary }}
           />
 
           <View style={styles.settingsSection}>
@@ -263,132 +411,3 @@ export default function ProfileScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    paddingTop: 60,
-    paddingBottom: spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  content: {
-    flex: 1,
-  },
-  avatarSection: {
-    alignItems: 'center',
-    paddingVertical: spacing.xl,
-  },
-  avatarContainer: {
-    position: 'relative',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-  avatarPlaceholder: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarBadge: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
-  uploadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 60,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarHint: {
-    marginTop: spacing.sm,
-    fontSize: 14,
-  },
-  form: {
-    paddingHorizontal: spacing.lg,
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: spacing.xs,
-    marginLeft: spacing.xs,
-  },
-  inputContainer: {
-    paddingHorizontal: 0,
-  },
-  inputInner: {
-    borderBottomWidth: 0,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.md,
-  },
-  saveButton: {
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.lg,
-  },
-  saveButtonContainer: {
-    marginTop: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  signOutButton: {
-    borderWidth: 2,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.lg,
-  },
-  signOutButtonContainer: {
-    marginTop: spacing.md,
-  },
-  settingsSection: {
-    marginTop: spacing.xl,
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: spacing.md,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  settingHint: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-});

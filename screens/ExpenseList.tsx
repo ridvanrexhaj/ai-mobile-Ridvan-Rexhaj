@@ -14,9 +14,294 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Card, Icon } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { Expense } from '../types';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme, lightColors } from '../contexts/ThemeContext';
 import { spacing, borderRadius, shadows } from '../theme/colors';
 import ExpenseForm from './ExpenseForm';
+
+const getStyles = (colors: typeof lightColors) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+  },
+  header: {
+    paddingTop: spacing.xxl + 10,
+    paddingBottom: spacing.xl,
+    borderBottomLeftRadius: borderRadius.xl,
+    borderBottomRightRadius: borderRadius.xl,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.xl,
+  },
+  greeting: {
+    fontSize: 16,
+    color: colors.text.inverse,
+    marginBottom: spacing.xs,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: colors.text.inverse,
+  },
+  signOutButton: {
+    width: 44,
+    height: 44,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  totalCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: borderRadius.lg,
+    marginHorizontal: spacing.lg,
+    padding: spacing.lg,
+  },
+  totalLabel: {
+    color: colors.text.inverse,
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
+  },
+  totalAmount: {
+    fontSize: 42,
+    fontWeight: '800',
+    color: colors.text.inverse,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  totalStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    marginBottom: 2,
+  },
+  statLabel: {
+    color: colors.text.inverse,
+    fontSize: 12,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  listContent: {
+    paddingTop: spacing.md,
+    paddingBottom: 100,
+  },
+  cardWrapper: {
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  card: {
+    backgroundColor: colors.background.paper,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    ...shadows.sm,
+  },
+  expenseRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
+  },
+  expenseInfo: {
+    flex: 1,
+  },
+  description: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  metaInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  categoryBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: borderRadius.sm,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  date: {
+    fontSize: 12,
+    color: colors.text.secondary,
+  },
+  actions: {
+    alignItems: 'flex-end',
+    marginLeft: spacing.sm,
+  },
+  amount: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.xl,
+  },
+  emptyIconContainer: {
+    width: 120,
+    height: 120,
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    paddingHorizontal: spacing.xl,
+  },
+  fab: {
+    position: 'absolute',
+    right: spacing.lg,
+    bottom: spacing.lg,
+    width: 64,
+    height: 64,
+    borderRadius: borderRadius.full,
+    ...shadows.xl,
+  },
+  fabGradient: {
+    width: 64,
+    height: 64,
+    borderRadius: borderRadius.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  budgetSection: {
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  budgetRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  budgetLabel: {
+    color: colors.text.inverse,
+    fontSize: 12,
+  },
+  budgetAmount: {
+    color: colors.text.inverse,
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: spacing.xs,
+  },
+  budgetProgressBar: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 3,
+    marginBottom: spacing.xs,
+    overflow: 'hidden',
+  },
+  budgetProgress: {
+    height: 6,
+    borderRadius: 3,
+  },
+  budgetRemaining: {
+    color: colors.text.inverse,
+    fontSize: 11,
+  },
+  setBudgetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  setBudgetText: {
+    color: colors.text.inverse,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  budgetInputContainer: {
+    marginTop: spacing.md,
+    gap: spacing.sm,
+  },
+  budgetInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    color: colors.text.inverse,
+    fontSize: 16,
+  },
+  budgetButtons: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  budgetSaveButton: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+  budgetCancelButton: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+  budgetButtonText: {
+    color: colors.text.inverse,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+});
 
 export default function ExpenseList() {
   const { colors } = useTheme();
@@ -27,6 +312,8 @@ export default function ExpenseList() {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [monthlyBudget, setMonthlyBudget] = useState('');
   const [showBudgetInput, setShowBudgetInput] = useState(false);
+
+  const styles = getStyles(colors);
 
   useEffect(() => {
     fetchExpenses();
@@ -404,276 +691,3 @@ export default function ExpenseList() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingTop: spacing.xxl + 10,
-    paddingBottom: spacing.xl,
-    borderBottomLeftRadius: borderRadius.xl,
-    borderBottomRightRadius: borderRadius.xl,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.xl,
-  },
-  greeting: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: spacing.xs,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '800',
-  },
-  signOutButton: {
-    width: 44,
-    height: 44,
-    borderRadius: borderRadius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  totalCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: borderRadius.lg,
-    marginHorizontal: spacing.lg,
-    padding: spacing.lg,
-  },
-  totalLabel: {
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  totalAmount: {
-    fontSize: 42,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  totalStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  statLabel: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 12,
-  },
-  statDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  listContent: {
-    paddingTop: spacing.md,
-    paddingBottom: 100,
-  },
-  cardWrapper: {
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-  },
-  card: {
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    ...shadows.sm,
-  },
-  expenseRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: borderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.md,
-  },
-  expenseInfo: {
-    flex: 1,
-  },
-  description: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: spacing.xs,
-  },
-  metaInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  categoryBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-    borderRadius: borderRadius.sm,
-  },
-  categoryText: {
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  date: {
-    fontSize: 12,
-  },
-  actions: {
-    alignItems: 'flex-end',
-    marginLeft: spacing.sm,
-  },
-  amount: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: spacing.xs,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  actionButton: {
-    width: 32,
-    height: 32,
-    borderRadius: borderRadius.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  emptyIconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: borderRadius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  emptyText: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: spacing.xs,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    textAlign: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  fab: {
-    position: 'absolute',
-    right: spacing.lg,
-    bottom: spacing.lg,
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.full,
-    ...shadows.xl,
-  },
-  fabGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  budgetSection: {
-    marginTop: spacing.md,
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  budgetRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  budgetLabel: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 12,
-  },
-  budgetAmount: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: spacing.xs,
-  },
-  budgetProgressBar: {
-    height: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 3,
-    marginBottom: spacing.xs,
-    overflow: 'hidden',
-  },
-  budgetProgress: {
-    height: 6,
-    borderRadius: 3,
-  },
-  budgetRemaining: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 11,
-  },
-  setBudgetButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: spacing.md,
-    paddingVertical: spacing.sm,
-    gap: spacing.xs,
-  },
-  setBudgetText: {
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  budgetInputContainer: {
-    marginTop: spacing.md,
-    gap: spacing.sm,
-  },
-  budgetInput: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: borderRadius.sm,
-    padding: spacing.sm,
-    color: '#fff',
-    fontSize: 16,
-  },
-  budgetButtons: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  budgetSaveButton: {
-    flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: borderRadius.sm,
-    padding: spacing.sm,
-    alignItems: 'center',
-  },
-  budgetCancelButton: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: borderRadius.sm,
-    padding: spacing.sm,
-    alignItems: 'center',
-  },
-  budgetButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});

@@ -93,7 +93,7 @@ export const darkColors = {
     primary: '#F9FAFB',
     secondary: '#D1D5DB',
     disabled: '#6B7280',
-    inverse: '#111827',
+    inverse: '#FFFFFF',
   },
   border: {
     light: '#374151',
