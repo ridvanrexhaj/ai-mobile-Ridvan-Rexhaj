@@ -17,26 +17,18 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || '';
+const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey || '';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase configuration missing!');
-  console.error('supabaseUrl:', supabaseUrl);
-  console.error('supabaseAnonKey length:', supabaseAnonKey?.length || 0);
-  console.error('Constants.expoConfig?.extra:', Constants.expoConfig?.extra);
-  console.error('process.env.EXPO_PUBLIC_SUPABASE_URL:', process.env.EXPO_PUBLIC_SUPABASE_URL);
+  console.error('⚠️ Supabase configuration missing! Check that SUPABASE_URL and SUPABASE_ANON_KEY are set in your .env file.');
 }
 
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key',
-  {
-    auth: {
-      storage: Platform.OS !== 'web' ? ExpoSecureStoreAdapter : AsyncStorage,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-    },
-  }
-);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: Platform.OS !== 'web' ? ExpoSecureStoreAdapter : AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+});

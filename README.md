@@ -2,20 +2,6 @@
 
 A modern, mobile-first expense tracking application built with React Native, Expo, and Supabase.
 
-## ⚠️ IMPORTANT: Fix Required
-
-**Your Replit Secrets are currently swapped!** The app won't work until you fix this.
-
-**Quick Fix**: In Replit Secrets (🔒):
-- `EXPO_PUBLIC_SUPABASE_URL` should be your **Supabase URL** (e.g., `https://xxxxx.supabase.co`)  
-- `EXPO_PUBLIC_SUPABASE_ANON_KEY` should be your **anon key** (long JWT starting with `eyJ...`)
-
-📖 **See `ENVIRONMENT_SETUP.md` for detailed step-by-step instructions.**
-
-After fixing, restart the workflow and you're all set! 🎉
-
----
-
 ## ✨ Features
 
 - **User Authentication**: Secure sign up, login, and logout functionality
