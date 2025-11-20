@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: colors.border.light,
+    borderTopColor: '#E5E7EB',
     ...shadows.md,
   },
   footerButton: {
