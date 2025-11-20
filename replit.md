@@ -201,6 +201,13 @@ Before deployment:
 
 ## 📝 Recent Changes
 
+**November 20, 2025 - Icon System & Performance Fixes**
+- Replaced all @expo/vector-icons Ionicons with @rneui/themed Icon component for better web compatibility
+- Fixed critical infinite render loop by memoizing theme context values with useMemo
+- Fixed React hooks order violation by ensuring all hooks run before conditional returns
+- Updated all icon references across App.tsx, ExpenseList, ProfileScreen, and AIInsightsScreen
+- App now runs smoothly without performance issues or crashes
+
 **November 20, 2025 - Dark Mode & Theme Improvements**
 - Implemented fully functional dark mode toggle in Profile screen
 - Created ThemeContext with comprehensive light and dark color palettes

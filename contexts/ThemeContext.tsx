@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect, useMemo, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'react-native';
 
@@ -130,6 +130,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     loadTheme();
   }, []);
 
+  const isDark = themeMode === 'dark';
+  const colors = useMemo(() => isDark ? darkColors : lightColors, [isDark]);
+
+  const value = useMemo(
+    () => ({ isDark, colors, toggleTheme, themeMode }),
+    [isDark, colors, themeMode]
+  );
+
   async function loadTheme() {
     try {
       const savedTheme = await AsyncStorage.getItem('themeMode');
@@ -155,15 +163,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const isDark = themeMode === 'dark';
-  const colors = isDark ? darkColors : lightColors;
-
   if (!isLoaded) {
     return null;
   }
 
   return (
-    <ThemeContext.Provider value={{ isDark, colors, toggleTheme, themeMode }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
