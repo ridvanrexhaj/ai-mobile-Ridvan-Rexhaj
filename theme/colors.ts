@@ -16,16 +16,16 @@ export const colors = {
     light: '#34D399',
     dark: '#059669',
   },
+  error: '#EF4444',
   danger: {
     main: '#EF4444',
     light: '#F87171',
     dark: '#DC2626',
   },
-  warning: {
-    main: '#F59E0B',
-    light: '#FBBF24',
-  },
+  warning: '#F59E0B',
   background: {
+    primary: '#F9FAFB',
+    secondary: '#F3F4F6',
     default: '#F9FAFB',
     paper: '#FFFFFF',
     gradient1: '#F3F4F6',
@@ -50,6 +50,26 @@ export const colors = {
     health: '#10B981',
     other: '#6B7280',
   },
+};
+
+export const categoryColors: { [key: string]: string } = {
+  food: '#F59E0B',
+  transport: '#3B82F6',
+  shopping: '#EC4899',
+  entertainment: '#8B5CF6',
+  bills: '#EF4444',
+  health: '#10B981',
+  other: '#6B7280',
+};
+
+export const categoryIcons: { [key: string]: string } = {
+  food: 'fast-food',
+  transport: 'car',
+  shopping: 'cart',
+  entertainment: 'game-controller',
+  bills: 'receipt',
+  health: 'medkit',
+  other: 'ellipse',
 };
 
 export const spacing = {
