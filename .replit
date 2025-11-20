@@ -36,5 +36,9 @@ build = ["npm", "run", "web", "--", "--no-dev"]
 run = ["npm", "run", "web"]
 
 [[ports]]
+localPort = 5000
+externalPort = 5000
+
+[[ports]]
 localPort = 43515
 externalPort = 80
