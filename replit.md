@@ -13,9 +13,12 @@
 
 This is a full-featured expense tracking mobile application that allows users to:
 - Create accounts and authenticate securely
-- Track their expenses with categories
+- Track their expenses with categories and receipts
 - View, edit, and delete expenses
-- See total expense summaries
+- See total expense summaries and AI insights
+- Set monthly budgets and track spending
+- Upload profile avatars
+- Toggle between light and dark themes
 
 ## 🏗️ Architecture
 
@@ -43,7 +46,11 @@ workspace/
 │   └── Auth.tsx              # Sign in/up component with gradient design
 ├── screens/
 │   ├── ExpenseList.tsx       # Main expense list view with modern cards
-│   └── ExpenseForm.tsx       # Add/edit expense form with grid layout
+│   ├── ExpenseForm.tsx       # Add/edit expense form with grid layout
+│   ├── ProfileScreen.tsx     # User profile with avatar and dark mode toggle
+│   └── AIInsightsScreen.tsx  # AI-powered spending insights
+├── contexts/
+│   └── ThemeContext.tsx      # Theme provider with light/dark mode support
 ├── theme/
 │   └── colors.ts             # Centralized theme configuration
 ├── types/
@@ -194,6 +201,16 @@ Before deployment:
 
 ## 📝 Recent Changes
 
+**November 20, 2025 - Dark Mode & Theme Improvements**
+- Implemented fully functional dark mode toggle in Profile screen
+- Created ThemeContext with comprehensive light and dark color palettes
+- Converted ExpenseList and ProfileScreen to use dynamic theme colors
+- Fixed critical text.inverse color issue for readable gradient headers in both themes
+- Added theme persistence across app sessions
+- Updated navigation icons (receipt, stats-chart, person-circle)
+- Moved getStyles functions before components to fix initialization errors
+- Successfully tested theme toggle end-to-end with architect verification
+
 **November 20, 2025 - Design Modernization**
 - Complete UI/UX overhaul with modern gradient design
 - Created centralized theme system (`theme/colors.ts`)
@@ -217,27 +234,29 @@ Before deployment:
 ### Color Palette
 - **Primary**: Purple gradient (#6B46C1 to #9333EA)
 - **Categories**: Color-coded (Food: Orange, Transport: Blue, Shopping: Pink, etc.)
-- **Background**: Light gray (#F9FAFB) with white cards
-- **Text**: Dark gray hierarchy for readability
+- **Light Mode**: Light gray background (#F9FAFB) with white cards
+- **Dark Mode**: Dark gray background (#111827) with slightly lighter cards
+- **Text**: Smart hierarchy with proper contrast in both themes
 
 ### Design Principles
 - Clean, modern UI with gradient accents
+- Full dark mode support with theme toggle
 - Mobile-first approach
 - Consistent spacing using theme constants
 - Card-based layouts with subtle shadows
 - Color-coded categories for quick identification
 - Smooth touch interactions with active states
+- Dynamic theming with readable text on all backgrounds
 
 ## 💡 Future Enhancements
 
 Potential improvements:
 - Export expenses to CSV
-- Expense analytics and charts
-- Budget tracking and alerts
-- Receipt photo uploads
+- Enhanced expense analytics and charts
+- Budget alert notifications
 - Multi-currency support
 - Recurring expense templates
-- Dark mode support
+- Expense category customization
 
 ## 📚 Resources
 
