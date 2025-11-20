@@ -255,7 +255,7 @@ export default function ProfileScreen() {
             onPress={handleSignOut}
             type="outline"
             buttonStyle={styles.signOutButton}
-            titleStyle={{ color: colors.error }}
+            titleStyle={{color: colors.error}}
             containerStyle={styles.signOutButtonContainer}
           />
         </View>
@@ -267,7 +267,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -300,7 +299,6 @@ const styles = StyleSheet.create({
     borderRadius: 60,
   },
   avatarPlaceholder: {
-    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -308,7 +306,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: colors.primary.main,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -330,7 +327,6 @@ const styles = StyleSheet.create({
   },
   avatarHint: {
     marginTop: spacing.sm,
-    color: colors.text.secondary,
     fontSize: 14,
   },
   form: {
@@ -339,7 +335,6 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.text.primary,
     marginBottom: spacing.xs,
     marginLeft: spacing.xs,
   },
@@ -348,7 +343,6 @@ const styles = StyleSheet.create({
   },
   inputInner: {
     borderBottomWidth: 0,
-    backgroundColor: colors.background.secondary,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
   },
@@ -376,14 +370,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.text.primary,
     marginBottom: spacing.md,
   },
   settingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.background.secondary,
     padding: spacing.md,
     borderRadius: borderRadius.md,
   },
@@ -395,11 +387,9 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text.primary,
   },
   settingHint: {
     fontSize: 12,
-    color: colors.text.secondary,
     marginTop: 2,
   },
 });

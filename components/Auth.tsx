@@ -3,7 +3,8 @@ import { Alert, StyleSheet, View, Text, AppState, KeyboardAvoidingView, Platform
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
 import { Button, Input } from '@rneui/themed';
-import { colors, spacing, borderRadius, shadows } from '../theme/colors';
+import { useTheme } from '../contexts/ThemeContext';
+import { spacing, borderRadius, shadows } from '../theme/colors';
 
 AppState.addEventListener('change', (state) => {
   if (state === 'active') {
@@ -14,6 +15,7 @@ AppState.addEventListener('change', (state) => {
 });
 
 export default function Auth() {
+  const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -88,7 +90,6 @@ export default function Auth() {
                 leftIcon={{ 
                   type: 'material-community', 
                   name: 'email-outline',
-                  color: colors.primary.main,
                   size: 22,
                 }}
               />
@@ -106,7 +107,6 @@ export default function Auth() {
                 leftIcon={{ 
                   type: 'material-community', 
                   name: 'lock-outline',
-                  color: colors.primary.main,
                   size: 22,
                 }}
               />
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '800',
-    color: colors.text.inverse,
     marginBottom: spacing.sm,
     textAlign: 'center',
   },
@@ -193,7 +192,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   formCard: {
-    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.xl,
     padding: spacing.lg,
     ...shadows.xl,
@@ -201,21 +199,18 @@ const styles = StyleSheet.create({
   form: {
   },
   inputLabel: {
-    color: colors.text.primary,
     fontSize: 14,
     fontWeight: '600',
     marginBottom: spacing.xs,
   },
   inputContainer: {
     borderBottomWidth: 0,
-    backgroundColor: colors.background.default,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
     marginTop: spacing.xs,
   },
   input: {
     fontSize: 16,
-    color: colors.text.primary,
   },
   primaryButtonContainer: {
     marginTop: spacing.md,
@@ -229,7 +224,6 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.inverse,
   },
   divider: {
     flexDirection: 'row',
@@ -239,15 +233,12 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: colors.border.light,
   },
   dividerText: {
     marginHorizontal: spacing.md,
-    color: colors.text.secondary,
     fontSize: 14,
   },
   toggleButtonText: {
-    color: colors.primary.main,
     fontSize: 14,
     fontWeight: '600',
   },

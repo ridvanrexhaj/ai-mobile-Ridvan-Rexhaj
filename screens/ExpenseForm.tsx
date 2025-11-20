@@ -14,24 +14,19 @@ import { Button, Input, Icon } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { Expense } from '../types';
-import { colors, spacing, borderRadius, shadows } from '../theme/colors';
+import { useTheme } from '../contexts/ThemeContext';
+import { spacing, borderRadius, shadows } from '../theme/colors';
 
 interface Props {
   expense?: Expense | null;
   onClose: (shouldRefresh?: boolean) => void;
 }
 
-const CATEGORIES = [
-  { name: 'food', label: 'Food', icon: 'food', color: colors.categories.food },
-  { name: 'transport', label: 'Transport', icon: 'car', color: colors.categories.transport },
-  { name: 'shopping', label: 'Shopping', icon: 'shopping', color: colors.categories.shopping },
-  { name: 'entertainment', label: 'Entertainment', icon: 'movie', color: colors.categories.entertainment },
-  { name: 'bills', label: 'Bills', icon: 'receipt', color: colors.categories.bills },
-  { name: 'health', label: 'Health', icon: 'hospital-box', color: colors.categories.health },
-  { name: 'other', label: 'Other', icon: 'dots-horizontal-circle', color: colors.categories.other },
-];
-
 export default function ExpenseForm({ expense, onClose }: Props) {
+  const { colors } = useTheme();
+  
+  const CATEGORIES = [
+  ];
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('other');
@@ -148,7 +143,6 @@ export default function ExpenseForm({ expense, onClose }: Props) {
               leftIcon={{ 
                 type: 'material-community', 
                 name: 'text',
-                color: colors.text.secondary,
                 size: 22,
               }}
             />
@@ -207,7 +201,6 @@ export default function ExpenseForm({ expense, onClose }: Props) {
               leftIcon={{ 
                 type: 'material-community', 
                 name: 'calendar',
-                color: colors.text.secondary,
                 size: 22,
               }}
             />
@@ -253,7 +246,6 @@ export default function ExpenseForm({ expense, onClose }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.default,
   },
   header: {
     paddingTop: spacing.xxl + 10,
@@ -278,7 +270,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.text.inverse,
   },
   scrollContent: {
     flexGrow: 1,
@@ -287,7 +278,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   amountSection: {
-    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
     marginBottom: spacing.lg,
@@ -296,7 +286,6 @@ const styles = StyleSheet.create({
   },
   amountLabel: {
     fontSize: 14,
-    color: colors.text.secondary,
     marginBottom: spacing.sm,
     fontWeight: '600',
   },
@@ -307,7 +296,6 @@ const styles = StyleSheet.create({
   currencySymbol: {
     fontSize: 48,
     fontWeight: '800',
-    color: colors.primary.main,
     marginRight: spacing.sm,
   },
   amountInputWrapper: {
@@ -320,7 +308,6 @@ const styles = StyleSheet.create({
   amountText: {
     fontSize: 48,
     fontWeight: '800',
-    color: colors.text.primary,
     textAlign: 'center',
   },
   section: {
@@ -329,20 +316,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.primary,
     marginBottom: spacing.md,
     marginLeft: spacing.xs,
   },
   inputContainer: {
     borderBottomWidth: 0,
-    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
     ...shadows.sm,
   },
   input: {
     fontSize: 16,
-    color: colors.text.primary,
   },
   categoryGrid: {
     flexDirection: 'row',
@@ -352,7 +336,6 @@ const styles = StyleSheet.create({
   categoryCard: {
     width: '30%',
     aspectRatio: 1,
-    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.md,
     padding: spacing.md,
     justifyContent: 'center',
@@ -371,7 +354,6 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     fontSize: 12,
-    color: colors.text.primary,
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -379,7 +361,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.md,
     padding: spacing.lg,
-    backgroundColor: colors.background.paper,
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
     ...shadows.md,
@@ -394,7 +375,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
   },
   cancelButtonText: {
-    color: colors.text.secondary,
     fontWeight: '600',
   },
   saveButton: {
@@ -406,6 +386,5 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.inverse,
   },
 });

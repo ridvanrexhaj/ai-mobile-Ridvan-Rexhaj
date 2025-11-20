@@ -8,24 +8,77 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  TextInput,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Card, Icon } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { Expense } from '../types';
-import { colors, spacing, borderRadius, shadows } from '../theme/colors';
+import { useTheme } from '../contexts/ThemeContext';
+import { spacing, borderRadius, shadows } from '../theme/colors';
 import ExpenseForm from './ExpenseForm';
 
 export default function ExpenseList() {
+  const { colors } = useTheme();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [monthlyBudget, setMonthlyBudget] = useState('');
+  const [showBudgetInput, setShowBudgetInput] = useState(false);
 
   useEffect(() => {
     fetchExpenses();
+    loadBudget();
   }, []);
+
+  async function loadBudget() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('monthly_budget')
+        .eq('id', user.id)
+        .single();
+
+      if (data && data.monthly_budget) {
+        setMonthlyBudget(data.monthly_budget.toString());
+      }
+    } catch (error) {
+      console.error('Error loading budget:', error);
+    }
+  }
+
+  async function saveBudget() {
+    try {
+      const budget = parseFloat(monthlyBudget);
+      if (isNaN(budget) || budget <= 0) {
+        Alert.alert('Invalid Budget', 'Please enter a valid amount');
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          monthly_budget: budget,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) throw error;
+
+      setShowBudgetInput(false);
+      Alert.alert('Success', 'Monthly budget saved!');
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
+  }
 
   async function fetchExpenses() {
     try {
@@ -229,6 +282,72 @@ export default function ExpenseList() {
               <Text style={styles.statLabel}>Avg. Amount</Text>
             </View>
           </View>
+
+          {monthlyBudget && parseFloat(monthlyBudget) > 0 && (
+            <View style={styles.budgetSection}>
+              <View style={styles.budgetRow}>
+                <Text style={styles.budgetLabel}>Monthly Budget</Text>
+                <TouchableOpacity onPress={() => setShowBudgetInput(true)}>
+                  <Icon name="pencil" type="material-community" size={16} color="rgba(255,255,255,0.8)" />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.budgetAmount}>${monthlyBudget}</Text>
+              <View style={styles.budgetProgressBar}>
+                <View 
+                  style={[
+                    styles.budgetProgress, 
+                    { 
+                      width: `${Math.min((parseFloat(getTotalExpenses()) / parseFloat(monthlyBudget)) * 100, 100)}%`,
+                      backgroundColor: (parseFloat(getTotalExpenses()) / parseFloat(monthlyBudget)) > 0.9 ? colors.danger.main : colors.success.main,
+                    }
+                  ]} 
+                />
+              </View>
+              <Text style={styles.budgetRemaining}>
+                ${Math.max(0, parseFloat(monthlyBudget) - parseFloat(getTotalExpenses())).toFixed(2)} remaining
+              </Text>
+            </View>
+          )}
+
+          {!showBudgetInput && (!monthlyBudget || parseFloat(monthlyBudget) === 0) && (
+            <TouchableOpacity 
+              style={styles.setBudgetButton}
+              onPress={() => setShowBudgetInput(true)}
+            >
+              <Icon name="wallet-plus" type="material-community" size={20} color="rgba(255,255,255,0.9)" />
+              <Text style={styles.setBudgetText}>Set Monthly Budget</Text>
+            </TouchableOpacity>
+          )}
+
+          {showBudgetInput && (
+            <View style={styles.budgetInputContainer}>
+              <TextInput
+                style={styles.budgetInput}
+                placeholder="Enter budget"
+                placeholderTextColor="rgba(255,255,255,0.6)"
+                keyboardType="numeric"
+                value={monthlyBudget}
+                onChangeText={setMonthlyBudget}
+              />
+              <View style={styles.budgetButtons}>
+                <TouchableOpacity 
+                  style={styles.budgetSaveButton}
+                  onPress={saveBudget}
+                >
+                  <Text style={styles.budgetButtonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.budgetCancelButton}
+                  onPress={() => {
+                    setShowBudgetInput(false);
+                    loadBudget();
+                  }}
+                >
+                  <Text style={styles.budgetButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       </LinearGradient>
 
@@ -289,7 +408,6 @@ export default function ExpenseList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.default,
   },
   header: {
     paddingTop: spacing.xxl + 10,
@@ -312,7 +430,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: colors.text.inverse,
   },
   signOutButton: {
     width: 44,
@@ -335,7 +452,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   totalAmount: {
-    color: colors.text.inverse,
     fontSize: 42,
     fontWeight: '800',
     textAlign: 'center',
@@ -351,7 +467,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statValue: {
-    color: colors.text.inverse,
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 2,
@@ -374,7 +489,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   card: {
-    backgroundColor: colors.background.paper,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     ...shadows.sm,
@@ -397,7 +511,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   metaInfo: {
@@ -418,7 +531,6 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
-    color: colors.text.secondary,
   },
   actions: {
     alignItems: 'flex-end',
@@ -427,7 +539,6 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   actionButtons: {
@@ -438,7 +549,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: borderRadius.sm,
-    backgroundColor: colors.background.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -452,7 +562,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.background.default,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.lg,
@@ -460,12 +569,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 20,
     fontWeight: '600',
-    color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   emptySubtext: {
     fontSize: 14,
-    color: colors.text.secondary,
     textAlign: 'center',
     paddingHorizontal: spacing.xl,
   },
@@ -484,5 +591,89 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  budgetSection: {
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  budgetRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  budgetLabel: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+  },
+  budgetAmount: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: spacing.xs,
+  },
+  budgetProgressBar: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 3,
+    marginBottom: spacing.xs,
+    overflow: 'hidden',
+  },
+  budgetProgress: {
+    height: 6,
+    borderRadius: 3,
+  },
+  budgetRemaining: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 11,
+  },
+  setBudgetButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  setBudgetText: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  budgetInputContainer: {
+    marginTop: spacing.md,
+    gap: spacing.sm,
+  },
+  budgetInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    color: '#fff',
+    fontSize: 16,
+  },
+  budgetButtons: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  budgetSaveButton: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+  budgetCancelButton: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: borderRadius.sm,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+  budgetButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
