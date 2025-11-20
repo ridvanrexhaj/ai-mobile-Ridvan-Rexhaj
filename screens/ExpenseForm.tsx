@@ -17,7 +17,7 @@ import { Expense } from '../types';
 interface Props {
   session: Session;
   expense?: Expense | null;
-  onClose: () => void;
+  onClose: (shouldRefresh?: boolean) => void;
 }
 
 const CATEGORIES = [
@@ -85,7 +85,7 @@ export default function ExpenseForm({ session, expense, onClose }: Props) {
         Alert.alert('Success', 'Expense added successfully');
       }
 
-      onClose();
+      onClose(true);
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
@@ -157,7 +157,7 @@ export default function ExpenseForm({ session, expense, onClose }: Props) {
           <View style={styles.buttonContainer}>
             <Button
               title="Cancel"
-              onPress={onClose}
+              onPress={() => onClose(false)}
               type="outline"
               buttonStyle={styles.cancelButton}
               containerStyle={styles.button}

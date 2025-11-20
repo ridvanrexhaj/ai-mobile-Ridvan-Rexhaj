@@ -14,6 +14,7 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,9 +40,12 @@ export default function App() {
     setShowForm(true);
   };
 
-  const handleCloseForm = () => {
+  const handleCloseForm = (shouldRefresh: boolean = false) => {
     setShowForm(false);
     setEditingExpense(null);
+    if (shouldRefresh) {
+      setRefreshKey(prev => prev + 1);
+    }
   };
 
   return (
@@ -54,11 +58,12 @@ export default function App() {
               session={session}
               onAddExpense={handleAddExpense}
               onEditExpense={handleEditExpense}
+              refreshKey={refreshKey}
             />
             <Modal
               visible={showForm}
               animationType="slide"
-              onRequestClose={handleCloseForm}
+              onRequestClose={() => handleCloseForm(false)}
             >
               <ExpenseForm
                 session={session}

@@ -17,9 +17,10 @@ interface Props {
   session: Session;
   onAddExpense: () => void;
   onEditExpense: (expense: Expense) => void;
+  refreshKey: number;
 }
 
-export default function ExpenseList({ session, onAddExpense, onEditExpense }: Props) {
+export default function ExpenseList({ session, onAddExpense, onEditExpense, refreshKey }: Props) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -27,6 +28,12 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense }: Pr
   useEffect(() => {
     fetchExpenses();
   }, []);
+
+  useEffect(() => {
+    if (refreshKey > 0) {
+      fetchExpenses();
+    }
+  }, [refreshKey]);
 
   async function fetchExpenses() {
     try {
