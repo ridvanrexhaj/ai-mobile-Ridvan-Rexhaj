@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
+import { ENV } from '../config/environment';
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -17,12 +18,8 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || '';
-const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('⚠️ Supabase configuration missing! Check that SUPABASE_URL and SUPABASE_ANON_KEY are set in your .env file.');
-}
+const supabaseUrl = ENV.SUPABASE_URL;
+const supabaseAnonKey = ENV.SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
