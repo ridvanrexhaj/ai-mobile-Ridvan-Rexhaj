@@ -10,10 +10,9 @@ import {
   ActivityIndicator,
   Switch,
 } from 'react-native';
-import { Input, Button } from '@rneui/themed';
+import { Input, Button, Icon } from '@rneui/themed';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 import { useTheme, lightColors } from '../contexts/ThemeContext';
 import { spacing, borderRadius, shadows } from '../theme/colors';
@@ -323,11 +322,11 @@ export default function ProfileScreen() {
                 <Image source={{ uri: profile.avatar_url }} style={styles.avatar} />
               ) : (
                 <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                  <Ionicons name="person" size={60} color={colors.text.secondary} />
+                  <Icon name="person" type="material" size={60} color={colors.text.secondary} />
                 </View>
               )}
               <View style={styles.avatarBadge}>
-                <Ionicons name="camera" size={16} color="#fff" />
+                <Icon name="camera-alt" type="material" size={16} color="#fff" />
               </View>
               {uploading && (
                 <View style={styles.uploadingOverlay}>
@@ -346,7 +345,7 @@ export default function ProfileScreen() {
             placeholderTextColor={colors.text.disabled}
             value={fullName}
             onChangeText={setFullName}
-            leftIcon={<Ionicons name="person-outline" size={20} color={colors.text.secondary} />}
+            leftIcon={<Icon name="person-outline" type="material" size={20} color={colors.text.secondary} />}
             containerStyle={styles.inputContainer}
             inputContainerStyle={styles.inputInner}
             inputStyle={{ color: colors.text.primary }}
@@ -358,7 +357,7 @@ export default function ProfileScreen() {
             placeholderTextColor={colors.text.disabled}
             value={currency}
             onChangeText={setCurrency}
-            leftIcon={<Ionicons name="cash-outline" size={20} color={colors.text.secondary} />}
+            leftIcon={<Icon name="attach-money" type="material" size={20} color={colors.text.secondary} />}
             containerStyle={styles.inputContainer}
             inputContainerStyle={styles.inputInner}
             inputStyle={{ color: colors.text.primary }}
@@ -369,7 +368,7 @@ export default function ProfileScreen() {
             
             <View style={styles.settingRow}>
               <View style={styles.settingLeft}>
-                <Ionicons name="moon" size={20} color={colors.primary.main} style={{ marginRight: spacing.md }} />
+                <Icon name="dark-mode" type="material" size={20} color={colors.primary.main} style={{ marginRight: spacing.md }} />
                 <View>
                   <Text style={styles.settingLabel}>Dark Mode</Text>
                   <Text style={styles.settingHint}>Toggle app-wide dark theme</Text>

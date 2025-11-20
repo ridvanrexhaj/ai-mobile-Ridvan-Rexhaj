@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@rneui/themed';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import { supabase } from '../lib/supabase';
 import { getFinancialInsights, SpendingData } from '../lib/openai';
@@ -149,6 +149,7 @@ export default function AIInsightsScreen() {
 
   const totalSpending = expenses.reduce((sum, exp) => sum + exp.amount, 0);
   const screenWidth = Dimensions.get('window').width;
+  const chartWidth = screenWidth - (spacing.lg * 2) - (spacing.lg * 2); // Account for container padding + card padding
 
   if (loading) {
     return (
@@ -168,7 +169,7 @@ export default function AIInsightsScreen() {
       >
         <View style={styles.headerContent}>
           <View style={styles.headerLeft}>
-            <Ionicons name="sparkles" size={32} color={colors.text.inverse} />
+            <Icon name="auto-awesome" type="material" size={32} color={colors.text.inverse} />
             <View style={{ marginLeft: spacing.md }}>
               <Text style={styles.headerTitle}>AI Insights</Text>
               <Text style={styles.headerSubtitle}>Powered by AI</Text>
@@ -183,7 +184,7 @@ export default function AIInsightsScreen() {
       >
         {expenses.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="analytics-outline" size={64} color={colors.text.disabled} />
+            <Icon name="analytics" type="material" size={64} color={colors.text.disabled} />
             <Text style={[styles.emptyText, { color: colors.text.primary }]}>No expenses to analyze</Text>
             <Text style={[styles.emptySubtext, { color: colors.text.secondary }]}>
               Add some expenses to get AI-powered insights
@@ -224,7 +225,7 @@ export default function AIInsightsScreen() {
                     <ActivityIndicator color={colors.text.inverse} />
                   ) : (
                     <>
-                      <Ionicons name="sparkles" size={20} color={colors.text.inverse} />
+                      <Icon name="auto-awesome" type="material" size={20} color={colors.text.inverse} />
                       <Text style={styles.aiButtonText}>
                         {aiInsights ? 'Refresh Insights' : 'Get AI Insights'}
                       </Text>
@@ -238,7 +239,7 @@ export default function AIInsightsScreen() {
               <Text style={[styles.chartTitle, { color: colors.text.primary }]}>Last 7 Days</Text>
               <LineChart
                 data={getWeeklyData()}
-                width={screenWidth - 48}
+                width={chartWidth}
                 height={220}
                 chartConfig={{
                   backgroundColor: colors.background.paper,
@@ -264,7 +265,7 @@ export default function AIInsightsScreen() {
                 <Text style={[styles.chartTitle, { color: colors.text.primary }]}>Spending by Category</Text>
                 <PieChart
                   data={getCategoryData()}
-                  width={screenWidth - 48}
+                  width={chartWidth}
                   height={220}
                   chartConfig={{
                     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,

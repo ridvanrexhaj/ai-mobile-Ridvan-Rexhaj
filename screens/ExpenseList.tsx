@@ -11,7 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button, Card, Icon } from '@rneui/themed';
+import { Icon } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { Expense } from '../types';
 import { useTheme, lightColors } from '../contexts/ThemeContext';

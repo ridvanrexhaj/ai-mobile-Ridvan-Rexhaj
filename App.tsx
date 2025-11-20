@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider as RNEThemeProvider } from '@rneui/themed';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@rneui/themed';
 import { supabase } from './lib/supabase';
 import { Session } from '@supabase/supabase-js';
 
@@ -76,19 +76,18 @@ function AppContent() {
           <Tab.Navigator
             screenOptions={({ route }) => ({
               tabBarIcon: ({ focused, color, size }) => {
-                let iconName: keyof typeof Ionicons.glyphMap;
+                let iconName = '';
+                let iconType = 'material-community';
 
                 if (route.name === 'Expenses') {
-                  iconName = focused ? 'receipt' : 'receipt-outline';
+                  iconName = focused ? 'receipt' : 'receipt';
                 } else if (route.name === 'Insights') {
-                  iconName = focused ? 'stats-chart' : 'stats-chart-outline';
+                  iconName = focused ? 'chart-line' : 'chart-line';
                 } else if (route.name === 'Profile') {
-                  iconName = focused ? 'person-circle' : 'person-circle-outline';
-                } else {
-                  iconName = 'ellipse';
+                  iconName = focused ? 'account-circle' : 'account-circle';
                 }
 
-                return <Ionicons name={iconName} size={size} color={color} />;
+                return <Icon name={iconName} type={iconType} size={size} color={color} />;
               },
               tabBarActiveTintColor: colors.primary.main,
               tabBarInactiveTintColor: colors.text.secondary,
