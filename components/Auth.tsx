@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, View, Text, AppState, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
 import { Button, Input } from '@rneui/themed';
+import { colors, spacing, borderRadius, shadows } from '../theme/colors';
 
 AppState.addEventListener('change', (state) => {
   if (state === 'active') {
@@ -50,52 +52,101 @@ export default function Auth() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.title}>💰 Expense Tracker</Text>
-          <Text style={styles.subtitle}>
-            {isSignUp ? 'Create your account' : 'Welcome back'}
+      <LinearGradient
+        colors={[colors.primary.gradient1, colors.primary.gradient2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <View style={styles.iconContainer}>
+              <Text style={styles.icon}>💰</Text>
+            </View>
+            <Text style={styles.title}>Expense Tracker</Text>
+            <Text style={styles.subtitle}>
+              {isSignUp ? 'Create your account to get started' : 'Welcome back! Sign in to continue'}
+            </Text>
+          </View>
+
+          <View style={styles.formCard}>
+            <View style={styles.form}>
+              <Input
+                label="Email Address"
+                labelStyle={styles.inputLabel}
+                onChangeText={(text) => setEmail(text)}
+                value={email}
+                placeholder="you@example.com"
+                autoCapitalize="none"
+                autoComplete="email"
+                keyboardType="email-address"
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={styles.input}
+                leftIcon={{ 
+                  type: 'material-community', 
+                  name: 'email-outline',
+                  color: colors.primary.main,
+                  size: 22,
+                }}
+              />
+              <Input
+                label="Password"
+                labelStyle={styles.inputLabel}
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                secureTextEntry={true}
+                placeholder="Enter your password"
+                autoCapitalize="none"
+                autoComplete={isSignUp ? 'password-new' : 'password'}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={styles.input}
+                leftIcon={{ 
+                  type: 'material-community', 
+                  name: 'lock-outline',
+                  color: colors.primary.main,
+                  size: 22,
+                }}
+              />
+
+              <Button
+                title={isSignUp ? 'Create Account' : 'Sign In'}
+                disabled={loading}
+                loading={loading}
+                onPress={isSignUp ? signUpWithEmail : signInWithEmail}
+                buttonStyle={styles.primaryButton}
+                titleStyle={styles.primaryButtonText}
+                containerStyle={styles.primaryButtonContainer}
+                ViewComponent={LinearGradient}
+                linearGradientProps={{
+                  colors: [colors.primary.gradient1, colors.primary.gradient2],
+                  start: { x: 0, y: 0 },
+                  end: { x: 1, y: 0 },
+                }}
+              />
+
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>or</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <Button
+                title={isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+                type="clear"
+                onPress={() => setIsSignUp(!isSignUp)}
+                titleStyle={styles.toggleButtonText}
+              />
+            </View>
+          </View>
+
+          <Text style={styles.footer}>
+            Secure • Private • Simple
           </Text>
-        </View>
-
-        <View style={styles.form}>
-          <Input
-            label="Email"
-            leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-            placeholder="email@address.com"
-            autoCapitalize="none"
-            autoComplete="email"
-            keyboardType="email-address"
-          />
-          <Input
-            label="Password"
-            leftIcon={{ type: 'font-awesome', name: 'lock' }}
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            secureTextEntry={true}
-            placeholder="Password"
-            autoCapitalize="none"
-            autoComplete={isSignUp ? 'password-new' : 'password'}
-          />
-
-          <Button
-            title={isSignUp ? 'Sign Up' : 'Sign In'}
-            disabled={loading}
-            loading={loading}
-            onPress={isSignUp ? signUpWithEmail : signInWithEmail}
-            buttonStyle={styles.primaryButton}
-          />
-
-          <Button
-            title={isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
-            type="clear"
-            onPress={() => setIsSignUp(!isSignUp)}
-            titleStyle={styles.toggleButtonText}
-          />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </LinearGradient>
     </KeyboardAvoidingView>
   );
 }
@@ -103,45 +154,108 @@ export default function Auth() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+  },
+  gradient: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: spacing.lg,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: spacing.xl,
+  },
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  icon: {
+    fontSize: 48,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.text.inverse,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  formCard: {
+    backgroundColor: colors.background.paper,
+    borderRadius: borderRadius.xl,
+    padding: spacing.lg,
+    ...shadows.xl,
   },
   form: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    gap: spacing.xs,
+  },
+  inputLabel: {
+    color: colors.text.primary,
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: spacing.xs,
+  },
+  inputContainer: {
+    borderBottomWidth: 0,
+    backgroundColor: colors.background.default,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.xs,
+  },
+  input: {
+    fontSize: 16,
+    color: colors.text.primary,
+  },
+  primaryButtonContainer: {
+    marginTop: spacing.md,
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
   },
   primaryButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-    paddingVertical: 12,
-    marginTop: 10,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.md,
+  },
+  primaryButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text.inverse,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: spacing.md,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.border.light,
+  },
+  dividerText: {
+    marginHorizontal: spacing.md,
+    color: colors.text.secondary,
+    fontSize: 14,
   },
   toggleButtonText: {
-    color: '#4CAF50',
+    color: colors.primary.main,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  footer: {
+    textAlign: 'center',
+    marginTop: spacing.xl,
+    color: 'rgba(255, 255, 255, 0.8)',
     fontSize: 14,
   },
 });

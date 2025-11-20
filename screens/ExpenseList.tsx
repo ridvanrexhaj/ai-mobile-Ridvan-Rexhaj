@@ -8,10 +8,12 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Card, Icon } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { Expense } from '../types';
+import { colors, spacing, borderRadius, shadows } from '../theme/colors';
 
 interface Props {
   session: Session;
@@ -100,67 +102,124 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
   };
 
   const getCategoryIcon = (category: string) => {
-    const icons: { [key: string]: string } = {
-      food: 'restaurant',
-      transport: 'directions-car',
-      shopping: 'shopping-cart',
-      entertainment: 'movie',
-      bills: 'receipt',
-      health: 'local-hospital',
-      other: 'category',
+    const icons: { [key: string]: { name: string; type: string } } = {
+      food: { name: 'food', type: 'material-community' },
+      transport: { name: 'car', type: 'material-community' },
+      shopping: { name: 'shopping', type: 'material-community' },
+      entertainment: { name: 'movie', type: 'material-community' },
+      bills: { name: 'receipt', type: 'material-community' },
+      health: { name: 'hospital-box', type: 'material-community' },
+      other: { name: 'dots-horizontal-circle', type: 'material-community' },
     };
-    return icons[category.toLowerCase()] || 'category';
+    const normalizedCategory = (category || 'other').toLowerCase();
+    return icons[normalizedCategory] || icons.other;
   };
 
-  const renderExpense = ({ item }: { item: Expense }) => (
-    <Card containerStyle={styles.card}>
-      <View style={styles.expenseRow}>
-        <View style={styles.iconContainer}>
-          <Icon
-            name={getCategoryIcon(item.category)}
-            type="material"
-            size={28}
-            color="#4CAF50"
-          />
-        </View>
-        <View style={styles.expenseInfo}>
-          <Text style={styles.description}>{item.description}</Text>
-          <View style={styles.metaInfo}>
-            <Text style={styles.category}>{item.category}</Text>
-            <Text style={styles.date}>{formatDate(item.date)}</Text>
+  const getCategoryColor = (category: string) => {
+    const normalizedCategory = (category || 'other').toLowerCase();
+    const cat = normalizedCategory as keyof typeof colors.categories;
+    return colors.categories[cat] || colors.categories.other;
+  };
+
+  const renderExpense = ({ item }: { item: Expense }) => {
+    const categoryColor = getCategoryColor(item.category);
+    const categoryIcon = getCategoryIcon(item.category);
+
+    return (
+      <View style={styles.cardWrapper}>
+        <TouchableOpacity 
+          style={styles.card}
+          activeOpacity={0.95}
+          onPress={() => onEditExpense(item)}
+        >
+          <View style={styles.expenseRow}>
+            <View style={[styles.iconContainer, { backgroundColor: `${categoryColor}15` }]}>
+              <Icon
+                name={categoryIcon.name}
+                type={categoryIcon.type}
+                size={28}
+                color={categoryColor}
+              />
+            </View>
+            <View style={styles.expenseInfo}>
+              <Text style={styles.description} numberOfLines={1}>{item.description}</Text>
+              <View style={styles.metaInfo}>
+                <View style={[styles.categoryBadge, { backgroundColor: `${categoryColor}20` }]}>
+                  <Text style={[styles.categoryText, { color: categoryColor }]}>
+                    {((item.category || 'other').charAt(0).toUpperCase() + (item.category || 'other').slice(1))}
+                  </Text>
+                </View>
+                <Text style={styles.date}>{formatDate(item.date)}</Text>
+              </View>
+            </View>
+            <View style={styles.actions}>
+              <Text style={styles.amount}>${item.amount.toFixed(2)}</Text>
+              <View style={styles.actionButtons}>
+                <TouchableOpacity 
+                  style={styles.actionButton}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    onEditExpense(item);
+                  }}
+                >
+                  <Icon name="pencil" type="material-community" size={18} color={colors.primary.main} />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.actionButton}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    deleteExpense(item.id);
+                  }}
+                >
+                  <Icon name="delete" type="material-community" size={18} color={colors.danger.main} />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
-        <View style={styles.actions}>
-          <Text style={styles.amount}>${item.amount.toFixed(2)}</Text>
-          <View style={styles.actionButtons}>
-            <TouchableOpacity onPress={() => onEditExpense(item)}>
-              <Icon name="edit" type="material" size={20} color="#2196F3" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => deleteExpense(item.id)}>
-              <Icon name="delete" type="material" size={20} color="#F44336" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        </TouchableOpacity>
       </View>
-    </Card>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My Expenses</Text>
-        <Button
-          title="Sign Out"
-          onPress={() => supabase.auth.signOut()}
-          buttonStyle={styles.signOutButton}
-          titleStyle={{ fontSize: 14 }}
-        />
-      </View>
+      <LinearGradient
+        colors={[colors.primary.gradient1, colors.primary.gradient2]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.greeting}>Hello 👋</Text>
+            <Text style={styles.title}>Your Expenses</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.signOutButton}
+            onPress={() => supabase.auth.signOut()}
+          >
+            <Icon name="logout" type="material-community" size={22} color={colors.text.inverse} />
+          </TouchableOpacity>
+        </View>
 
-      <Card containerStyle={styles.totalCard}>
-        <Text style={styles.totalLabel}>Total Expenses</Text>
-        <Text style={styles.totalAmount}>${getTotalExpenses()}</Text>
-      </Card>
+        <View style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Total Spending</Text>
+          <Text style={styles.totalAmount}>${getTotalExpenses()}</Text>
+          <View style={styles.totalStats}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{expenses.length}</Text>
+              <Text style={styles.statLabel}>Transactions</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>
+                {expenses.length > 0 ? (parseFloat(getTotalExpenses()) / expenses.length).toFixed(2) : '0.00'}
+              </Text>
+              <Text style={styles.statLabel}>Avg. Amount</Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
 
       {loading && expenses.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -168,9 +227,11 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
         </View>
       ) : expenses.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Icon name="receipt-long" type="material" size={64} color="#ccc" />
+          <View style={styles.emptyIconContainer}>
+            <Icon name="receipt-long" type="material" size={64} color={colors.text.disabled} />
+          </View>
           <Text style={styles.emptyText}>No expenses yet</Text>
-          <Text style={styles.emptySubtext}>Tap the + button to add your first expense</Text>
+          <Text style={styles.emptySubtext}>Start tracking your spending by adding your first expense</Text>
         </View>
       ) : (
         <FlatList
@@ -178,14 +239,26 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
           renderItem={renderExpense}
           keyExtractor={(item) => item.id}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl 
+              refreshing={refreshing} 
+              onRefresh={onRefresh}
+              tintColor={colors.primary.main}
+              colors={[colors.primary.main]}
+            />
           }
           contentContainerStyle={styles.listContent}
         />
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={onAddExpense}>
-        <Icon name="add" type="material" color="white" size={28} />
+      <TouchableOpacity style={styles.fab} onPress={onAddExpense} activeOpacity={0.85}>
+        <LinearGradient
+          colors={[colors.primary.gradient1, colors.primary.gradient2]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.fabGradient}
+        >
+          <Icon name="plus" type="material-community" color={colors.text.inverse} size={28} />
+        </LinearGradient>
       </TouchableOpacity>
     </View>
   );
@@ -194,63 +267,107 @@ export default function ExpenseList({ session, onAddExpense, onEditExpense, refr
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background.default,
   },
   header: {
+    paddingTop: spacing.xxl + 10,
+    paddingBottom: spacing.xl,
+    borderBottomLeftRadius: borderRadius.xl,
+    borderBottomRightRadius: borderRadius.xl,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    alignItems: 'flex-start',
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.xl,
+  },
+  greeting: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: spacing.xs,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 28,
+    fontWeight: '800',
+    color: colors.text.inverse,
   },
   signOutButton: {
-    backgroundColor: '#FF5722',
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 5,
+    width: 44,
+    height: 44,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   totalCard: {
-    borderRadius: 10,
-    marginHorizontal: 15,
-    marginTop: 15,
-    backgroundColor: '#4CAF50',
-    borderWidth: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: borderRadius.lg,
+    marginHorizontal: spacing.lg,
+    padding: spacing.lg,
   },
   totalLabel: {
-    color: 'white',
-    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 14,
     textAlign: 'center',
+    marginBottom: spacing.xs,
   },
   totalAmount: {
-    color: 'white',
-    fontSize: 36,
-    fontWeight: 'bold',
+    color: colors.text.inverse,
+    fontSize: 42,
+    fontWeight: '800',
     textAlign: 'center',
-    marginTop: 5,
+    marginBottom: spacing.md,
+  },
+  totalStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    color: colors.text.inverse,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  statLabel: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   listContent: {
+    paddingTop: spacing.md,
     paddingBottom: 100,
   },
+  cardWrapper: {
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+  },
   card: {
-    borderRadius: 10,
-    marginHorizontal: 15,
-    marginVertical: 5,
-    padding: 15,
-    elevation: 2,
+    backgroundColor: colors.background.paper,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    ...shadows.sm,
   },
   expenseRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconContainer: {
-    marginRight: 15,
+    width: 50,
+    height: 50,
+    borderRadius: borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
   },
   expenseInfo: {
     flex: 1,
@@ -258,70 +375,92 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 5,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
   metaInfo: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
+    gap: spacing.sm,
   },
-  category: {
-    fontSize: 12,
-    color: '#666',
-    backgroundColor: '#e0e0e0',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-    textTransform: 'capitalize',
+  categoryBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: borderRadius.sm,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   date: {
     fontSize: 12,
-    color: '#999',
+    color: colors.text.secondary,
   },
   actions: {
     alignItems: 'flex-end',
+    marginLeft: spacing.sm,
   },
   amount: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 5,
+    fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 10,
+    gap: spacing.sm,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.background.default,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: spacing.xl,
+  },
+  emptyIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.background.default,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
   },
   emptyText: {
-    fontSize: 18,
-    color: '#999',
-    marginTop: 15,
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
   },
   emptySubtext: {
     fontSize: 14,
-    color: '#ccc',
-    marginTop: 5,
+    color: colors.text.secondary,
     textAlign: 'center',
+    paddingHorizontal: spacing.xl,
   },
   fab: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#4CAF50',
+    right: spacing.lg,
+    bottom: spacing.lg,
+    width: 64,
+    height: 64,
+    borderRadius: borderRadius.full,
+    ...shadows.xl,
+  },
+  fabGradient: {
+    width: 64,
+    height: 64,
+    borderRadius: borderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
   },
 });

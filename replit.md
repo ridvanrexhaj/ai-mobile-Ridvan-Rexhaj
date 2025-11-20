@@ -40,13 +40,16 @@ workspace/
 ├── lib/
 │   └── supabase.ts           # Supabase client configuration
 ├── components/
-│   └── Auth.tsx              # Sign in/up component
+│   └── Auth.tsx              # Sign in/up component with gradient design
 ├── screens/
-│   ├── ExpenseList.tsx       # Main expense list view
-│   └── ExpenseForm.tsx       # Add/edit expense form
+│   ├── ExpenseList.tsx       # Main expense list view with modern cards
+│   └── ExpenseForm.tsx       # Add/edit expense form with grid layout
+├── theme/
+│   └── colors.ts             # Centralized theme configuration
 ├── types/
 │   └── index.ts              # TypeScript interfaces
 ├── assets/                    # App icons and images
+├── ROADMAP.md                # Development roadmap and vision
 ├── package.json              # Dependencies
 ├── app.json                  # Expo configuration
 ├── tsconfig.json             # TypeScript config
@@ -106,7 +109,8 @@ CREATE TABLE expenses (
 1. **Frontend Changes**: Edit files in `components/` or `screens/`
 2. **Types**: Update `types/index.ts`
 3. **Supabase Config**: Modify `lib/supabase.ts`
-4. **Styling**: Update inline styles in component files
+4. **Styling**: Update `theme/colors.ts` for global theme or component styles
+5. **Design System**: Use theme constants for consistent spacing, colors, and shadows
 
 ### Testing
 
@@ -128,6 +132,7 @@ CREATE TABLE expenses (
 - `@rneui/themed`: UI component library
 - `@rneui/base`: Base UI components
 - `@expo/vector-icons`: Icon library
+- `expo-linear-gradient`: Gradient backgrounds and buttons
 
 ### Backend
 - `@supabase/supabase-js`: Supabase client library
@@ -189,21 +194,39 @@ Before deployment:
 
 ## 📝 Recent Changes
 
-**November 20, 2025**
+**November 20, 2025 - Design Modernization**
+- Complete UI/UX overhaul with modern gradient design
+- Created centralized theme system (`theme/colors.ts`)
+- Updated Auth component with purple gradient background and card-based layout
+- Redesigned ExpenseList with gradient header, stats cards, and modern expense cards
+- Enhanced ExpenseForm with grid-based category selection and gradient buttons
+- Added color-coded category icons and badges
+- Improved visual hierarchy and spacing throughout the app
+- Created comprehensive development roadmap (ROADMAP.md)
+
+**November 20, 2025 - Initial Launch**
 - Initial project setup
 - Implemented authentication (sign up, login, logout)
 - Created expense CRUD operations
 - Added category-based expense tracking
-- Designed modern UI with React Native Elements
-- Configured for Replit deployment
+- Configured Supabase integration with RLS
 - Set up proper workflow on port 5000
 
-## 🎨 User Preferences
+## 🎨 Design System
 
-- Clean, modern UI design preferred
+### Color Palette
+- **Primary**: Purple gradient (#6B46C1 to #9333EA)
+- **Categories**: Color-coded (Food: Orange, Transport: Blue, Shopping: Pink, etc.)
+- **Background**: Light gray (#F9FAFB) with white cards
+- **Text**: Dark gray hierarchy for readability
+
+### Design Principles
+- Clean, modern UI with gradient accents
 - Mobile-first approach
-- Secure authentication required
-- Real-time data sync via Supabase
+- Consistent spacing using theme constants
+- Card-based layouts with subtle shadows
+- Color-coded categories for quick identification
+- Smooth touch interactions with active states
 
 ## 💡 Future Enhancements
 
