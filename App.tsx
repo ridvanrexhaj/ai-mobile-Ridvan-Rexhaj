@@ -79,11 +79,11 @@ function AppContent() {
                 let iconName: keyof typeof Ionicons.glyphMap;
 
                 if (route.name === 'Expenses') {
-                  iconName = focused ? 'wallet' : 'wallet-outline';
-                } else if (route.name === 'AI Insights') {
-                  iconName = focused ? 'sparkles' : 'sparkles-outline';
+                  iconName = focused ? 'receipt' : 'receipt-outline';
+                } else if (route.name === 'Insights') {
+                  iconName = focused ? 'stats-chart' : 'stats-chart-outline';
                 } else if (route.name === 'Profile') {
-                  iconName = focused ? 'person' : 'person-outline';
+                  iconName = focused ? 'person-circle' : 'person-circle-outline';
                 } else {
                   iconName = 'ellipse';
                 }
@@ -103,7 +103,7 @@ function AppContent() {
             })}
           >
             <Tab.Screen name="Expenses" component={ExpenseList} />
-            <Tab.Screen name="AI Insights" component={AIInsightsScreen} />
+            <Tab.Screen name="Insights" component={AIInsightsScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
           </Tab.Navigator>
         ) : (

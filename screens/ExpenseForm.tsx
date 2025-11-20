@@ -22,10 +22,17 @@ interface Props {
   onClose: (shouldRefresh?: boolean) => void;
 }
 
+interface CategoryItem {
+  name: string;
+  label: string;
+  icon: string;
+  color: string;
+}
+
 export default function ExpenseForm({ expense, onClose }: Props) {
   const { colors } = useTheme();
   
-  const CATEGORIES = [
+  const CATEGORIES: CategoryItem[] = [
   ];
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
