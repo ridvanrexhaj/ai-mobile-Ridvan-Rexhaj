@@ -199,7 +199,6 @@ const styles = StyleSheet.create({
     ...shadows.xl,
   },
   form: {
-    gap: spacing.xs,
   },
   inputLabel: {
     color: colors.text.primary,

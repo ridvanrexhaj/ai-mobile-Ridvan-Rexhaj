@@ -17,12 +17,14 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-// Use Replit Secrets via environment variables
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+// Use Replit Secrets via environment variables or Constants
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || Constants.expoConfig?.extra?.supabaseUrl || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || Constants.expoConfig?.extra?.supabaseAnonKey || '';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('⚠️ Supabase credentials not found! Make sure EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY are set in Replit Secrets.');
+  console.error('⚠️ Supabase credentials not found!');
+  console.log('Debug - supabaseUrl:', supabaseUrl ? 'present' : 'missing');
+  console.log('Debug - supabaseAnonKey:', supabaseAnonKey ? 'present' : 'missing');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
