@@ -1,1 +1,12 @@
+So Im using replit , supabase the URL and anon key are in the .env file , and GitHub , the plan is to create a mobile app for tracking expenses , it needs to have CRUD ,auth,good structure and documentation and sleek design ,what I need from you is to generate me a good prompt for replit keep it short and understandable
 
+
+Build a mobile expense-tracking app with Supabase backend.
+Requirements:
+
+Use .env for Supabase URL and anon key
+Implement CRUD for expenses (create, read, update, delete)
+Add user authentication (sign up, login, logout)
+Clean project structure with clear documentation
+Sleek, modern UI design
+GitHub integration for version control
