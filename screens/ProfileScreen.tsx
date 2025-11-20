@@ -355,7 +355,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   signOutButton: {
-    borderColor: colors.error,
     borderWidth: 2,
     paddingVertical: spacing.md,
     borderRadius: borderRadius.lg,

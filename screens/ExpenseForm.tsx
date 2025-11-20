@@ -341,7 +341,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.border.light,
     ...shadows.sm,
   },
   categoryIconContainer: {
@@ -369,7 +368,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cancelButton: {
-    borderColor: colors.border.main,
     borderWidth: 1.5,
     paddingVertical: spacing.md,
     borderRadius: borderRadius.md,

@@ -1,10 +1,14 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+// Check if environment variables are available
+const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY || '';
+const baseURL = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || '';
+
+const openai = apiKey && baseURL ? new OpenAI({
+  apiKey,
+  baseURL,
   dangerouslyAllowBrowser: true,
-});
+}) : null;
 
 export interface SpendingData {
   total: number;
@@ -16,6 +20,25 @@ export interface SpendingData {
 }
 
 export async function getFinancialInsights(data: SpendingData): Promise<string> {
+  // Note: OpenAI integration requires a backend API endpoint for browser security
+  // Browser apps cannot directly access server environment variables
+  if (!openai) {
+    return `📊 **Your Spending Summary**
+
+Total spent: $${data.total.toFixed(2)} across ${data.transactionCount} transactions
+Average per transaction: $${data.averageTransaction.toFixed(2)}
+
+**Top Categories:**
+${data.byCategory.slice(0, 3).map(cat => `• ${cat.category}: $${cat.amount.toFixed(2)} (${cat.percentage.toFixed(1)}%)`).join('\n')}
+
+💡 **Quick Tips:**
+• Your highest spending is in ${data.topCategory || data.byCategory[0]?.category}
+• Consider setting a budget for categories where you spend most
+• Track your spending weekly to identify patterns
+
+_Note: AI-powered insights require a backend API. To enable this feature, you'll need to create a server endpoint that securely calls the OpenAI API._`;
+  }
+  
   try {
     const prompt = `You are a helpful financial advisor. Analyze this spending data and provide personalized, actionable insights:
 
