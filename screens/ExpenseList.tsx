@@ -312,6 +312,8 @@ export default function ExpenseList() {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [monthlyBudget, setMonthlyBudget] = useState('');
   const [showBudgetInput, setShowBudgetInput] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState('');
 
   const styles = getStyles(colors);
 
@@ -408,30 +410,20 @@ export default function ExpenseList() {
   }
 
   async function deleteExpense(id: string) {
-    Alert.alert(
-      'Delete Expense',
-      'Are you sure you want to delete this expense?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const { error } = await supabase
-                .from('expenses')
-                .delete()
-                .eq('id', id);
+    try {
+      setExpenses(expenses.filter(e => e.id !== id));
+      const { error } = await supabase
+        .from('expenses')
+        .delete()
+        .eq('id', id);
 
-              if (error) throw error;
-              fetchExpenses();
-            } catch (error: any) {
-              Alert.alert('Error', error.message);
-            }
-          },
-        },
-      ]
-    );
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+      fetchExpenses();
+    }
   }
 
   const onRefresh = () => {
@@ -449,8 +441,18 @@ export default function ExpenseList() {
   };
 
   const getTotalExpenses = () => {
-    return expenses.reduce((sum, expense) => sum + expense.amount, 0).toFixed(2);
+    return getFilteredExpenses().reduce((sum, expense) => sum + expense.amount, 0).toFixed(2);
   };
+
+  const getFilteredExpenses = () => {
+    return expenses.filter(expense => {
+      const matchesCategory = !selectedCategory || expense.category === selectedCategory;
+      const matchesSearch = !searchText || expense.description.toLowerCase().includes(searchText.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  };
+
+  const CATEGORY_LIST = ['all', 'food', 'transport', 'shopping', 'entertainment', 'bills', 'health', 'other'];
 
   const getCategoryIcon = (category: string) => {
     const icons: { [key: string]: { name: string; type: string } } = {
@@ -606,6 +608,42 @@ export default function ExpenseList() {
             </TouchableOpacity>
           )}
 
+          <View style={{ marginTop: spacing.lg, paddingHorizontal: spacing.lg }}>
+            <Text style={{ color: colors.text.inverse, fontSize: 14, fontWeight: '600', marginBottom: spacing.md }}>Filter by Category</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              {CATEGORY_LIST.map((cat) => (
+                <TouchableOpacity
+                  key={cat}
+                  onPress={() => setSelectedCategory(cat === 'all' ? null : cat)}
+                  style={{
+                    paddingHorizontal: spacing.md,
+                    paddingVertical: spacing.sm,
+                    borderRadius: borderRadius.full,
+                    backgroundColor: (cat === 'all' ? !selectedCategory : selectedCategory === cat) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.2)',
+                  }}
+                >
+                  <Text style={{ color: colors.text.inverse, fontSize: 12, fontWeight: '600', textTransform: 'capitalize' }}>{cat}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TextInput
+              placeholder="Search expenses..."
+              placeholderTextColor="rgba(255,255,255,0.6)"
+              value={searchText}
+              onChangeText={setSearchText}
+              style={{
+                marginTop: spacing.md,
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderRadius: borderRadius.md,
+                padding: spacing.md,
+                color: colors.text.inverse,
+                fontSize: 14,
+              }}
+            />
+          </View>
+
           {showBudgetInput && (
             <View style={styles.budgetInputContainer}>
               <TextInput
@@ -642,17 +680,17 @@ export default function ExpenseList() {
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Loading expenses...</Text>
         </View>
-      ) : expenses.length === 0 ? (
+      ) : getFilteredExpenses().length === 0 ? (
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconContainer}>
             <Icon name="receipt-long" type="material" size={64} color={colors.text.disabled} />
           </View>
-          <Text style={styles.emptyText}>No expenses yet</Text>
-          <Text style={styles.emptySubtext}>Start tracking your spending by adding your first expense</Text>
+          <Text style={styles.emptyText}>{expenses.length === 0 ? 'No expenses yet' : 'No matching expenses'}</Text>
+          <Text style={styles.emptySubtext}>{expenses.length === 0 ? 'Start tracking your spending by adding your first expense' : 'Try adjusting your filters'}</Text>
         </View>
       ) : (
         <FlatList
-          data={expenses}
+          data={getFilteredExpenses()}
           renderItem={renderExpense}
           keyExtractor={(item) => item.id}
           refreshControl={
