@@ -558,7 +558,7 @@ export default function ExpenseList() {
 
         <View style={styles.totalCard}>
           <Text style={styles.totalLabel}>Total Spending</Text>
-          <Text style={styles.totalAmount}>${getTotalExpenses()}</Text>
+          <Text style={styles.totalAmount}>${getTotalExpenses}</Text>
           <View style={styles.totalStats}>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{expenses.length}</Text>
@@ -567,7 +567,7 @@ export default function ExpenseList() {
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <Text style={styles.statValue}>
-                {expenses.length > 0 ? (parseFloat(getTotalExpenses()) / expenses.length).toFixed(2) : '0.00'}
+                {expenses.length > 0 ? (parseFloat(getTotalExpenses) / expenses.length).toFixed(2) : '0.00'}
               </Text>
               <Text style={styles.statLabel}>Avg. Amount</Text>
             </View>
@@ -587,14 +587,14 @@ export default function ExpenseList() {
                   style={[
                     styles.budgetProgress, 
                     { 
-                      width: `${Math.min((parseFloat(getTotalExpenses()) / parseFloat(monthlyBudget)) * 100, 100)}%`,
-                      backgroundColor: (parseFloat(getTotalExpenses()) / parseFloat(monthlyBudget)) > 0.9 ? colors.danger.main : colors.success.main,
+                      width: `${Math.min((parseFloat(getTotalExpenses) / parseFloat(monthlyBudget)) * 100, 100)}%`,
+                      backgroundColor: (parseFloat(getTotalExpenses) / parseFloat(monthlyBudget)) > 0.9 ? colors.danger.main : colors.success.main,
                     }
                   ]} 
                 />
               </View>
               <Text style={styles.budgetRemaining}>
-                ${Math.max(0, parseFloat(monthlyBudget) - parseFloat(getTotalExpenses())).toFixed(2)} remaining
+                ${Math.max(0, parseFloat(monthlyBudget) - parseFloat(getTotalExpenses)).toFixed(2)} remaining
               </Text>
             </View>
           )}
@@ -693,7 +693,7 @@ export default function ExpenseList() {
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Loading expenses...</Text>
         </View>
-      ) : getFilteredExpenses().length === 0 ? (
+      ) : getFilteredExpenses.length === 0 ? (
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconContainer}>
             <Icon name="receipt-long" type="material" size={64} color={colors.text.disabled} />
@@ -703,7 +703,7 @@ export default function ExpenseList() {
         </View>
       ) : (
         <FlatList
-          data={getFilteredExpenses()}
+          data={getFilteredExpenses}
           renderItem={renderExpense}
           keyExtractor={(item) => item.id}
           refreshControl={
