@@ -176,10 +176,6 @@ export default function ProfileScreen() {
 
   const styles = getStyles(colors);
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
   const loadProfile = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -207,6 +203,10 @@ export default function ProfileScreen() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
