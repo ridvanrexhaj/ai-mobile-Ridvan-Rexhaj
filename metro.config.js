@@ -1,9 +1,3 @@
-const config = {
-  project: {
-    ios: {},
-    android: {},
-    web: {},
-  },
-};
+const { getDefaultConfig } = require('expo/metro-config');
 
-module.exports = config;
+module.exports = getDefaultConfig(__dirname);

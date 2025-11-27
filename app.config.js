@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   expo: {
     name: "Expense Tracker",
     slug: "expense-tracker",
@@ -15,6 +15,10 @@ module.exports = {
     web: {
       bundler: "metro"
     },
-    plugins: []
+    plugins: [],
+    extra: {
+      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://demo.supabase.co',
+      supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'demo-key-for-testing'
+    }
   }
 };
