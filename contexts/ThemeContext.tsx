@@ -145,7 +145,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     loadTheme();
   }, []);
 
-  const isDark = themeMode === 'dark';
+  const isDark = useMemo(() => themeMode === 'dark', [themeMode]);
   const colors = useMemo(() => isDark ? darkColors : lightColors, [isDark]);
 
   const toggleTheme = useCallback(async () => {
@@ -160,7 +160,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ isDark, colors, toggleTheme, themeMode }),
-    [isDark, colors, toggleTheme, themeMode]
+    [isDark, colors, toggleTheme]
   );
 
   if (!isLoaded) {
