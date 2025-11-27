@@ -441,7 +441,7 @@ export default function ExpenseList() {
   };
 
   const getTotalExpenses = () => {
-    return getFilteredExpenses().reduce((sum, expense) => sum + expense.amount, 0).toFixed(2);
+    return expenses.reduce((sum, expense) => sum + expense.amount, 0).toFixed(2);
   };
 
   const getFilteredExpenses = () => {
