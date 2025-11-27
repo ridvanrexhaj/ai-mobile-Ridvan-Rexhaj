@@ -24,4 +24,19 @@ delete button is good filter should be to filter the visbale expenses not of the
 
 filter should be a drop down not visable all the time
 
+filter is not in drop down its still visable
+
+also make a better degn on the login page more sleek
+
+it is not sleek make a better design for login
+
+good design also add an icon on the login page where you put a ?
+
+not a ? add a logo wher the ? is remove the ? and add expense icon
+
+also on the login page
+
+add expense icon and remove the question marks
+
+generate the structure of the mobile app in a file
 
