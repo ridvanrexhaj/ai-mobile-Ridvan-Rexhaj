@@ -21,33 +21,52 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
-
   async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-    
-    if (error) {
-      Alert.alert('Error', error.message);
+    if (!email || !password) {
+      Alert.alert('Validation', 'Please enter email and password');
+      return;
     }
-    setLoading(false);
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      
+      if (error) {
+        Alert.alert('Error', error.message || 'Sign in failed. Make sure you have valid Supabase credentials.');
+      }
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Sign in failed. Check your internet connection and Supabase setup.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function signUpWithEmail() {
-    setLoading(true);
-    const { data: { session }, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-    });
-    
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else if (!session) {
-      Alert.alert('Success', 'Check your inbox for email verification!');
+    if (!email || !password) {
+      Alert.alert('Validation', 'Please enter email and password');
+      return;
     }
-    setLoading(false);
+
+    setLoading(true);
+    try {
+      const { data: { session }, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+      });
+      
+      if (error) {
+        Alert.alert('Error', error.message || 'Sign up failed. Make sure you have valid Supabase credentials.');
+      } else if (!session) {
+        Alert.alert('Success', 'Check your inbox for email verification!');
+      }
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Sign up failed. Check your internet connection and Supabase setup.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
