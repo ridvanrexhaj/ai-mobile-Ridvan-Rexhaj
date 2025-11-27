@@ -22,13 +22,13 @@ args = "Expense Tracker App"
 name = "Expense Tracker App"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "REACT_NATIVE_PACKAGER_HOSTNAME=0.0.0.0 npm run web"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -37,8 +37,4 @@ run = ["npm", "run", "web"]
 
 [[ports]]
 localPort = 5000
-externalPort = 5000
-
-[[ports]]
-localPort = 46275
 externalPort = 80
