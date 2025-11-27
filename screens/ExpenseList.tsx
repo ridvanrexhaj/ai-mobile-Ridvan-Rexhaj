@@ -430,7 +430,7 @@ export default function ExpenseList() {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchExpenses();
-  }, []);
+  }, [fetchExpenses]);
 
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);

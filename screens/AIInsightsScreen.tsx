@@ -99,7 +99,7 @@ export default function AIInsightsScreen() {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const getCategoryData = useMemo(() => {
     return Object.entries(expenses.reduce((acc, exp) => {

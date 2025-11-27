@@ -126,7 +126,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [isLoaded, setIsLoaded] = useState(false);
 
-  async function loadTheme() {
+  const loadTheme = useCallback(async () => {
     try {
       const savedTheme = await AsyncStorage.getItem('themeMode');
       if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -139,11 +139,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoaded(true);
     }
-  }
+  }, [systemColorScheme]);
 
   useEffect(() => {
     loadTheme();
-  }, []);
+  }, [loadTheme]);
 
   const isDark = useMemo(() => themeMode === 'dark', [themeMode]);
   const colors = useMemo(() => isDark ? darkColors : lightColors, [isDark]);
@@ -162,7 +162,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ isDark, colors, toggleTheme, themeMode }),
-    [isDark, colors, toggleTheme]
+    [isDark, colors, toggleTheme, themeMode]
   );
 
   if (!isLoaded) {
