@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
+import { supabaseConfig } from '../config.supabase';
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -33,9 +34,9 @@ const MemoryStorageAdapter = {
   },
 };
 
-// Use Replit Secrets via environment variables or Constants
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || Constants.expoConfig?.extra?.supabaseUrl || 'https://demo.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || Constants.expoConfig?.extra?.supabaseAnonKey || 'demo-key-for-testing';
+// Use environment variables or config file
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || Constants.expoConfig?.extra?.supabaseUrl || supabaseConfig.url;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || Constants.expoConfig?.extra?.supabaseAnonKey || supabaseConfig.anonKey;
 
 // Use appropriate storage based on platform
 let storageAdapter: any;
