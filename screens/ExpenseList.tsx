@@ -314,6 +314,7 @@ export default function ExpenseList() {
   const [showBudgetInput, setShowBudgetInput] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
+  const [showFilter, setShowFilter] = useState(false);
 
   const styles = getStyles(colors);
 
@@ -608,41 +609,53 @@ export default function ExpenseList() {
             </TouchableOpacity>
           )}
 
-          <View style={{ marginTop: spacing.lg, paddingHorizontal: spacing.lg }}>
-            <Text style={{ color: colors.text.inverse, fontSize: 14, fontWeight: '600', marginBottom: spacing.md }}>Filter by Category</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-              {CATEGORY_LIST.map((cat) => (
-                <TouchableOpacity
-                  key={cat}
-                  onPress={() => setSelectedCategory(cat === 'all' ? null : cat)}
-                  style={{
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: spacing.sm,
-                    borderRadius: borderRadius.full,
-                    backgroundColor: (cat === 'all' ? !selectedCategory : selectedCategory === cat) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
-                    borderWidth: 1,
-                    borderColor: 'rgba(255,255,255,0.2)',
-                  }}
-                >
-                  <Text style={{ color: colors.text.inverse, fontSize: 12, fontWeight: '600', textTransform: 'capitalize' }}>{cat}</Text>
-                </TouchableOpacity>
-              ))}
+          <TouchableOpacity 
+            onPress={() => setShowFilter(!showFilter)}
+            style={{ marginTop: spacing.lg, marginHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.1)', paddingVertical: spacing.md, borderRadius: borderRadius.md, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
+          >
+            <Icon name="filter" type="material-community" size={18} color="rgba(255,255,255,0.9)" />
+            <Text style={{ color: colors.text.inverse, fontSize: 14, fontWeight: '600', marginLeft: spacing.sm }}>
+              {showFilter ? 'Hide Filters' : 'Show Filters'}
+            </Text>
+          </TouchableOpacity>
+
+          {showFilter && (
+            <View style={{ marginTop: spacing.lg, paddingHorizontal: spacing.lg }}>
+              <Text style={{ color: colors.text.inverse, fontSize: 14, fontWeight: '600', marginBottom: spacing.md }}>Filter by Category</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+                {CATEGORY_LIST.map((cat) => (
+                  <TouchableOpacity
+                    key={cat}
+                    onPress={() => setSelectedCategory(cat === 'all' ? null : cat)}
+                    style={{
+                      paddingHorizontal: spacing.md,
+                      paddingVertical: spacing.sm,
+                      borderRadius: borderRadius.full,
+                      backgroundColor: (cat === 'all' ? !selectedCategory : selectedCategory === cat) ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
+                      borderWidth: 1,
+                      borderColor: 'rgba(255,255,255,0.2)',
+                    }}
+                  >
+                    <Text style={{ color: colors.text.inverse, fontSize: 12, fontWeight: '600', textTransform: 'capitalize' }}>{cat}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TextInput
+                placeholder="Search expenses..."
+                placeholderTextColor="rgba(255,255,255,0.6)"
+                value={searchText}
+                onChangeText={setSearchText}
+                style={{
+                  marginTop: spacing.md,
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: borderRadius.md,
+                  padding: spacing.md,
+                  color: colors.text.inverse,
+                  fontSize: 14,
+                }}
+              />
             </View>
-            <TextInput
-              placeholder="Search expenses..."
-              placeholderTextColor="rgba(255,255,255,0.6)"
-              value={searchText}
-              onChangeText={setSearchText}
-              style={{
-                marginTop: spacing.md,
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                borderRadius: borderRadius.md,
-                padding: spacing.md,
-                color: colors.text.inverse,
-                fontSize: 14,
-              }}
-            />
-          </View>
+          )}
 
           {showBudgetInput && (
             <View style={styles.budgetInputContainer}>
