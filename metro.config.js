@@ -1,12 +1,9 @@
-let getDefaultConfig;
-try {
-  getDefaultConfig = require('expo/metro-config').getDefaultConfig;
-} catch (e) {
-  // Fallback for environments that don't support metro-config
-  module.exports = {};
-}
+const config = {
+  project: {
+    ios: {},
+    android: {},
+    web: {},
+  },
+};
 
-if (getDefaultConfig) {
-  const config = getDefaultConfig(__dirname);
-  module.exports = config;
-}
+module.exports = config;

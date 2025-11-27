@@ -1,4 +1,3 @@
-try { require('react-native-url-polyfill/auto'); } catch (e) { }
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
