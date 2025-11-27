@@ -79,7 +79,7 @@ export default function Auth() {
                 colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.05)']}
                 style={styles.iconBg}
               >
-                <Icon name="wallet-multiple" type="material-community" size={48} color="white" />
+                <Icon name="wallet" type="material-community" size={48} color="white" />
               </LinearGradient>
             </View>
             <Text style={styles.mainTitle}>Expense Tracker</Text>
