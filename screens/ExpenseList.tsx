@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -427,35 +427,35 @@ export default function ExpenseList() {
     }
   }
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchExpenses();
-  };
+  }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric', 
       year: 'numeric' 
     });
-  };
+  }, []);
 
-  const getTotalExpenses = () => {
+  const getTotalExpenses = useMemo(() => {
     return expenses.reduce((sum, expense) => sum + expense.amount, 0).toFixed(2);
-  };
+  }, [expenses]);
 
-  const getFilteredExpenses = () => {
+  const getFilteredExpenses = useMemo(() => {
     return expenses.filter(expense => {
       const matchesCategory = !selectedCategory || expense.category === selectedCategory;
       const matchesSearch = !searchText || expense.description.toLowerCase().includes(searchText.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  };
+  }, [expenses, selectedCategory, searchText]);
 
   const CATEGORY_LIST = ['all', 'food', 'transport', 'shopping', 'entertainment', 'bills', 'health', 'other'];
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = useCallback((category: string) => {
     const icons: { [key: string]: { name: string; type: string } } = {
       food: { name: 'food', type: 'material-community' },
       transport: { name: 'car', type: 'material-community' },
@@ -467,13 +467,13 @@ export default function ExpenseList() {
     };
     const normalizedCategory = (category || 'other').toLowerCase();
     return icons[normalizedCategory] || icons.other;
-  };
+  }, []);
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = useCallback((category: string) => {
     const normalizedCategory = (category || 'other').toLowerCase();
     const cat = normalizedCategory as keyof typeof colors.categories;
     return colors.categories[cat] || colors.categories.other;
-  };
+  }, [colors]);
 
   const renderExpense = ({ item }: { item: Expense }) => {
     const categoryColor = getCategoryColor(item.category);
