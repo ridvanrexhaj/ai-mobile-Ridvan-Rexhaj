@@ -35,9 +35,9 @@ export default function AIInsightsScreen() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -57,7 +57,7 @@ export default function AIInsightsScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }
+  }, []);
 
   const generateAIInsights = useCallback(async () => {
     if (expenses.length === 0) return;

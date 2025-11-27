@@ -321,9 +321,9 @@ export default function ExpenseList() {
   useEffect(() => {
     fetchExpenses();
     loadBudget();
-  }, []);
+  }, [fetchExpenses, loadBudget]);
 
-  async function loadBudget() {
+  const loadBudget = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -340,7 +340,7 @@ export default function ExpenseList() {
     } catch (error) {
       console.error('Error loading budget:', error);
     }
-  }
+  }, []);
 
   async function saveBudget() {
     try {
@@ -370,7 +370,7 @@ export default function ExpenseList() {
     }
   }
 
-  async function fetchExpenses() {
+  const fetchExpenses = useCallback(async () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -390,7 +390,7 @@ export default function ExpenseList() {
       setLoading(false);
       setRefreshing(false);
     }
-  }
+  }, []);
 
   function handleAddExpense() {
     setEditingExpense(null);

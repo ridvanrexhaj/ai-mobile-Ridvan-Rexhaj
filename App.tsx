@@ -1,5 +1,5 @@
 import 'react-native-url-polyfill/auto';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider as RNEThemeProvider } from '@rneui/themed';
@@ -37,7 +37,7 @@ function AppContent() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const navigationTheme = isDark
+  const navigationTheme = useMemo(() => isDark
     ? {
         ...DarkTheme,
         colors: {
@@ -59,7 +59,7 @@ function AppContent() {
           text: colors.text.primary,
           border: colors.border.light,
         },
-      };
+      }, [isDark, colors]);
 
   if (loading) {
     return (
