@@ -318,11 +318,6 @@ export default function ExpenseList() {
 
   const styles = getStyles(colors);
 
-  useEffect(() => {
-    fetchExpenses();
-    loadBudget();
-  }, [fetchExpenses, loadBudget]);
-
   const loadBudget = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -341,6 +336,33 @@ export default function ExpenseList() {
       console.error('Error loading budget:', error);
     }
   }, []);
+
+  const fetchExpenses = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('expenses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false });
+
+      if (error) throw error;
+      setExpenses(data || []);
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchExpenses();
+    loadBudget();
+  }, [fetchExpenses, loadBudget]);
 
   async function saveBudget() {
     try {
@@ -369,28 +391,6 @@ export default function ExpenseList() {
       Alert.alert('Error', error.message);
     }
   }
-
-  const fetchExpenses = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: false });
-
-      if (error) throw error;
-      setExpenses(data || []);
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
 
   function handleAddExpense() {
     setEditingExpense(null);
