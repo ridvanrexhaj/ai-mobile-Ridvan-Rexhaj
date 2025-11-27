@@ -16,7 +16,9 @@ module.exports = {
       'otf', 'ttf', 'ttx', 'font', 'zip', 'md'
     ],
     sourceExts: ['js', 'jsx', 'ts', 'tsx', 'json'],
-    // Handle missing assets from @react-navigation/elements
-    blockList: [/node_modules\/.*\/\..*/],
+    // Ignore resolution errors for missing assets in node_modules
+    disableHierarchicalLookup: false,
   },
+  maxWorkers: 2,
+  watchFolders: [__dirname],
 };
