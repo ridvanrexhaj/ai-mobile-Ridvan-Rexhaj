@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -101,35 +101,34 @@ export default function AIInsightsScreen() {
     fetchData();
   };
 
-  function getCategoryData() {
-    const categoryTotals: { [key: string]: number } = {};
-    expenses.forEach(exp => {
+  const getCategoryData = useMemo(() => {
+    return Object.entries(expenses.reduce((acc, exp) => {
       const cat = exp.category || 'other';
-      categoryTotals[cat] = (categoryTotals[cat] || 0) + exp.amount;
-    });
-
-    const categoryColors: { [key: string]: string } = {
-      food: colors.categories.food,
-      transport: colors.categories.transport,
-      shopping: colors.categories.shopping,
-      entertainment: colors.categories.entertainment,
-      bills: colors.categories.bills,
-      health: colors.categories.health,
-      other: colors.categories.other,
-    };
-
-    return Object.entries(categoryTotals)
-      .map(([name, amount]) => ({
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        population: amount,
-        color: categoryColors[name] || colors.categories.other,
-        legendFontColor: colors.text.primary,
-        legendFontSize: 12,
-      }))
+      acc[cat] = (acc[cat] || 0) + exp.amount;
+      return acc;
+    }, {} as { [key: string]: number }))
+      .map(([name, amount]) => {
+        const categoryColors: { [key: string]: string } = {
+          food: colors.categories.food,
+          transport: colors.categories.transport,
+          shopping: colors.categories.shopping,
+          entertainment: colors.categories.entertainment,
+          bills: colors.categories.bills,
+          health: colors.categories.health,
+          other: colors.categories.other,
+        };
+        return {
+          name: name.charAt(0).toUpperCase() + name.slice(1),
+          population: amount,
+          color: categoryColors[name] || colors.categories.other,
+          legendFontColor: colors.text.primary,
+          legendFontSize: 12,
+        };
+      })
       .sort((a, b) => b.population - a.population);
-  }
+  }, [expenses, colors]);
 
-  function getWeeklyData() {
+  const getWeeklyData = useMemo(() => {
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - (6 - i));
@@ -145,7 +144,7 @@ export default function AIInsightsScreen() {
       labels: last7Days.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),
       datasets: [{ data: dailyTotals.length > 0 ? dailyTotals : [0] }],
     };
-  }
+  }, [expenses]);
 
   const totalSpending = expenses.reduce((sum, exp) => sum + exp.amount, 0);
   const screenWidth = Dimensions.get('window').width;
@@ -238,7 +237,7 @@ export default function AIInsightsScreen() {
             <View style={[styles.chartCard, { backgroundColor: colors.background.paper }]}>
               <Text style={[styles.chartTitle, { color: colors.text.primary }]}>Last 7 Days</Text>
               <LineChart
-                data={getWeeklyData()}
+                data={getWeeklyData}
                 width={chartWidth}
                 height={220}
                 chartConfig={{
@@ -260,11 +259,11 @@ export default function AIInsightsScreen() {
               />
             </View>
 
-            {getCategoryData().length > 0 && (
+            {getCategoryData.length > 0 && (
               <View style={[styles.chartCard, { backgroundColor: colors.background.paper }]}>
                 <Text style={[styles.chartTitle, { color: colors.text.primary }]}>Spending by Category</Text>
                 <PieChart
-                  data={getCategoryData()}
+                  data={getCategoryData}
                   width={chartWidth}
                   height={220}
                   chartConfig={{
@@ -300,7 +299,7 @@ export default function AIInsightsScreen() {
                 </View>
                 <View style={styles.statItem}>
                   <Text style={[styles.statValue, { color: colors.text.primary }]}>
-                    {getCategoryData()[0]?.name || 'N/A'}
+                    {getCategoryData[0]?.name || 'N/A'}
                   </Text>
                   <Text style={[styles.statLabel, { color: colors.text.secondary }]}>Top Category</Text>
                 </View>
