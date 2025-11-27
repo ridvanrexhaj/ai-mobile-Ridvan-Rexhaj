@@ -126,18 +126,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeMode, setThemeMode] = useState<ThemeMode>('light');
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    loadTheme();
-  }, []);
-
-  const isDark = themeMode === 'dark';
-  const colors = useMemo(() => isDark ? darkColors : lightColors, [isDark]);
-
-  const value = useMemo(
-    () => ({ isDark, colors, toggleTheme, themeMode }),
-    [isDark, colors, themeMode]
-  );
-
   async function loadTheme() {
     try {
       const savedTheme = await AsyncStorage.getItem('themeMode');
@@ -162,6 +150,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       console.error('Error saving theme:', error);
     }
   }
+
+  useEffect(() => {
+    loadTheme();
+  }, []);
+
+  const isDark = themeMode === 'dark';
+  const colors = useMemo(() => isDark ? darkColors : lightColors, [isDark]);
+
+  const value = useMemo(
+    () => ({ isDark, colors, toggleTheme, themeMode }),
+    [isDark, colors, themeMode]
+  );
 
   if (!isLoaded) {
     return null;

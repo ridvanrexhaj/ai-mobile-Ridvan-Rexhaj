@@ -12,3 +12,7 @@ Sleek, modern UI design
 GitHub integration for version control
 
 the supabase url and anon key are in the .env file
+
+there are no icons anywhere and on the ai insights page the chart is going slightly off screen
+
+
