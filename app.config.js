@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 module.exports = {
   expo: {
     name: "Expense Tracker",
@@ -17,10 +15,6 @@ module.exports = {
     web: {
       bundler: "metro"
     },
-    plugins: [],
-    extra: {
-      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
-      supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
-    }
+    plugins: []
   }
 };

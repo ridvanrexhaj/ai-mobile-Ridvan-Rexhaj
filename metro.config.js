@@ -1,5 +1,12 @@
-const { getDefaultConfig } = require('expo/metro-config');
+let getDefaultConfig;
+try {
+  getDefaultConfig = require('expo/metro-config').getDefaultConfig;
+} catch (e) {
+  // Fallback for environments that don't support metro-config
+  module.exports = {};
+}
 
-const config = getDefaultConfig(__dirname);
-
-module.exports = config;
+if (getDefaultConfig) {
+  const config = getDefaultConfig(__dirname);
+  module.exports = config;
+}
