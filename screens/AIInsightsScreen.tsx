@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -59,7 +59,7 @@ export default function AIInsightsScreen() {
     }
   }
 
-  async function generateAIInsights() {
+  const generateAIInsights = useCallback(async () => {
     if (expenses.length === 0) return;
 
     setAILoading(true);
@@ -94,12 +94,12 @@ export default function AIInsightsScreen() {
     } finally {
       setAILoading(false);
     }
-  }
+  }, [expenses]);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchData();
-  };
+  }, []);
 
   const getCategoryData = useMemo(() => {
     return Object.entries(expenses.reduce((acc, exp) => {

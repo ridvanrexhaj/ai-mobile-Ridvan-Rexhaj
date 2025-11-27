@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -180,7 +180,7 @@ export default function ProfileScreen() {
     loadProfile();
   }, []);
 
-  async function loadProfile() {
+  const loadProfile = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -206,7 +206,7 @@ export default function ProfileScreen() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   async function pickImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
