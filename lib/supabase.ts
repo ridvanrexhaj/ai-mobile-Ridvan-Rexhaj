@@ -17,14 +17,8 @@ const ExpoSecureStoreAdapter = {
 };
 
 // Use Replit Secrets via environment variables or Constants
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || Constants.expoConfig?.extra?.supabaseUrl || '';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || Constants.expoConfig?.extra?.supabaseAnonKey || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('⚠️ Supabase credentials not found!');
-  console.log('Debug - supabaseUrl:', supabaseUrl ? 'present' : 'missing');
-  console.log('Debug - supabaseAnonKey:', supabaseAnonKey ? 'present' : 'missing');
-}
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || Constants.expoConfig?.extra?.supabaseUrl || 'https://demo.supabase.co';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || Constants.expoConfig?.extra?.supabaseAnonKey || 'demo-key-for-testing';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
