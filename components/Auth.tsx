@@ -87,7 +87,7 @@ export default function Auth() {
           <View style={styles.topSection}>
             <View style={styles.logoIcon}>
               <Icon 
-                name="receipt-outline" 
+                name="receipt" 
                 type="material-community" 
                 size={28}
                 color="rgba(255,255,255,0.7)"
