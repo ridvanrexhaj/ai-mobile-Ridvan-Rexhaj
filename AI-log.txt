@@ -16,3 +16,12 @@ the supabase url and anon key are in the .env file
 there are no icons anywhere and on the ai insights page the chart is going slightly off screen
 
 the icons on my ap are missing please fix that
+
+where it showcases the expenses I made I want the delete button to function just like the edit button functions , also make a filter to filter through exppenses
+
+
+delete button is good filter should be to filter the visbale expenses not of the total spending
+
+filter should be a drop down not visable all the time
+
+

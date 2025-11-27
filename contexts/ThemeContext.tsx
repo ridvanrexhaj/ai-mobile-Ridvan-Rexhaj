@@ -150,13 +150,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const toggleTheme = useCallback(async () => {
     try {
-      const newMode: ThemeMode = themeMode === 'light' ? 'dark' : 'light';
-      setThemeMode(newMode);
-      await AsyncStorage.setItem('themeMode', newMode);
+      setThemeMode((current: ThemeMode) => {
+        const newMode = current === 'light' ? 'dark' : 'light';
+        AsyncStorage.setItem('themeMode', newMode).catch(e => console.error('Error saving theme:', e));
+        return newMode;
+      });
     } catch (error) {
       console.error('Error saving theme:', error);
     }
-  }, [themeMode]);
+  }, []);
 
   const value = useMemo(
     () => ({ isDark, colors, toggleTheme, themeMode }),
