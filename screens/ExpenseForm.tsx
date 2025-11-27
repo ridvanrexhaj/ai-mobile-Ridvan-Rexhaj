@@ -33,6 +33,13 @@ export default function ExpenseForm({ expense, onClose }: Props) {
   const { colors } = useTheme();
   
   const CATEGORIES: CategoryItem[] = [
+    { name: 'food', label: 'Food', icon: 'food', color: '#F59E0B' },
+    { name: 'transport', label: 'Transport', icon: 'car', color: '#3B82F6' },
+    { name: 'shopping', label: 'Shopping', icon: 'shopping', color: '#EC4899' },
+    { name: 'entertainment', label: 'Entertainment', icon: 'movie', color: '#8B5CF6' },
+    { name: 'bills', label: 'Bills', icon: 'receipt', color: '#EF4444' },
+    { name: 'health', label: 'Health', icon: 'hospital-box', color: '#10B981' },
+    { name: 'other', label: 'Other', icon: 'dots-horizontal-circle', color: '#6B7280' },
   ];
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
