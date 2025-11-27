@@ -21,6 +21,13 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  function showHelp() {
+    const helpText = isSignUp 
+      ? 'Create a new account with your email and password to start tracking your expenses.'
+      : 'Sign in with your email and password to access your expense tracker.';
+    Alert.alert('Help', helpText, [{ text: 'Got it', style: 'default' }]);
+  }
+
   async function signInWithEmail() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
@@ -65,6 +72,14 @@ export default function Auth() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.topSection}>
+            <TouchableOpacity 
+              onPress={showHelp}
+              style={styles.helpButton}
+            >
+              <View style={styles.helpIconBg}>
+                <Text style={styles.helpIcon}>?</Text>
+              </View>
+            </TouchableOpacity>
             <View style={styles.iconWrapper}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.25)', 'rgba(255,255,255,0.05)']}
@@ -188,6 +203,28 @@ const styles = StyleSheet.create({
   topSection: {
     alignItems: 'center',
     marginBottom: spacing.xxl + spacing.lg,
+    position: 'relative',
+  },
+  helpButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  helpIconBg: {
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  helpIcon: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: 'white',
   },
   iconWrapper: {
     marginBottom: spacing.lg,
